@@ -9,7 +9,11 @@ type Item = {
   qty: number;
   width: number;
   height: number;
-  pricePerM2: number;
+};
+
+const curtainPrices: Record<string, number> = {
+  Blackout: 24000,
+  Sunscreen: 25000,
 };
 
 const regiones = [
@@ -122,71 +126,6 @@ const comunas: Record<string, string[]> = {
     "Macul",
     "San Miguel",
   ],
-
-  "O’Higgins": [
-    "Rancagua",
-    "Machalí",
-    "San Fernando",
-    "Santa Cruz",
-    "Pichilemu",
-  ],
-
-  Maule: [
-    "Talca",
-    "Curicó",
-    "Linares",
-    "Constitución",
-    "Parral",
-  ],
-
-  Ñuble: [
-    "Chillán",
-    "San Carlos",
-    "Bulnes",
-    "Yungay",
-  ],
-
-  Biobío: [
-    "Concepción",
-    "Talcahuano",
-    "San Pedro de la Paz",
-    "Chiguayante",
-    "Los Ángeles",
-    "Coronel",
-    "Lota",
-  ],
-
-  "La Araucanía": [
-    "Temuco",
-    "Villarrica",
-    "Pucón",
-    "Angol",
-    "Padre Las Casas",
-  ],
-
-  "Los Ríos": [
-    "Valdivia",
-    "La Unión",
-    "Panguipulli",
-  ],
-
-  "Los Lagos": [
-    "Puerto Montt",
-    "Puerto Varas",
-    "Osorno",
-    "Castro",
-  ],
-
-  Aysén: [
-    "Coyhaique",
-    "Puerto Aysén",
-  ],
-
-  Magallanes: [
-    "Punta Arenas",
-    "Puerto Natales",
-    "Porvenir",
-  ],
 };
 
 export default function Cotizador() {
@@ -197,7 +136,6 @@ export default function Cotizador() {
     qty: 1,
     width: 0,
     height: 0,
-    pricePerM2: 0,
   });
 
   const [client, setClient] = useState({
@@ -218,14 +156,15 @@ export default function Cotizador() {
       qty: 1,
       width: 0,
       height: 0,
-      pricePerM2: 0,
     });
   };
 
   const area = (i: Item) => i.width * i.height;
 
-  const subtotal = (i: Item) =>
-    area(i) * i.pricePerM2 * i.qty;
+  const subtotal = (i: Item) => {
+    const price = curtainPrices[i.type] || 0;
+    return area(i) * price * i.qty;
+  };
 
   const total = items.reduce(
     (acc, i) => acc + subtotal(i),
@@ -261,97 +200,62 @@ export default function Cotizador() {
     <div className="min-h-screen bg-[#f7f4ee] text-black overflow-hidden relative">
 
       {/* FONDO */}
+
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
 
-        <div className="absolute top-0 left-0 w-[260px] h-[500px] bg-[#d54a2c] rounded-br-[120px] opacity-90" />
+        <div className="absolute top-0 left-0 w-[300px] h-[600px] bg-[#d54a2c] rounded-br-[140px] opacity-80" />
 
-        <div className="absolute top-[120px] right-[8%] w-[260px] h-[260px] border-[70px] border-[#f0b233] rounded-full" />
+        <div className="absolute top-20 right-10 w-[280px] h-[280px] border-[70px] border-[#f0b233] rounded-full opacity-70" />
 
-        <div className="absolute top-[70px] right-[15%] w-[120px] h-[60px] bg-[#1d7ed6] rounded-md rotate-6" />
+        <div className="absolute top-[35%] left-[-80px] w-[250px] h-[250px] bg-[#7caf6f] rounded-full blur-3xl opacity-40" />
 
-        <div className="absolute top-0 right-0 w-[90px] h-[320px] bg-[#7caf6f] rounded-bl-[60px]" />
+        <div className="absolute bottom-[10%] right-[-60px] w-[320px] h-[320px] bg-[#1d7ed6] rounded-full blur-3xl opacity-20" />
 
-        <div className="absolute bottom-[180px] right-0 w-[260px] h-[260px] bg-[#b8c8b0] rounded-tl-[120px] opacity-70" />
-
-        <div className="absolute top-[80px] left-[45%] w-[400px] h-[400px] bg-[#ebe4db] rounded-full opacity-80" />
+        <div className="absolute top-[65%] left-[35%] w-[450px] h-[450px] bg-[#ebe4db] rounded-full opacity-60" />
 
       </div>
 
       {/* HEADER */}
-     <header className="fixed top-0 left-0 w-full z-50 bg-black/50 backdrop-blur-xl border-b border-white/10 h-20">
-  <div className="max-w-7xl mx-auto flex justify-between items-center pl-2 pr-6 md:pl-4 md:pr-10 h-full">  
 
-<Link href="/" className="flex items-center gap-2">
+      <header className="fixed top-0 left-0 w-full z-50 bg-black/60 backdrop-blur-xl border-b border-white/10 h-20">
 
-  <Image
-    src="/images/BH.png"
-    alt="Black Home Logo"
-    width={120}
-    height={120}
-    priority
-    className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.6)]"
-  />
+        <div className="max-w-7xl mx-auto flex justify-between items-center px-4 md:px-8 h-full">
 
-  <div>
+          <Link href="/" className="flex items-center gap-3">
 
-    <h1 className="text-white text-2xl font-semibold tracking-[0.18em]">
-      BLACK HOME
-    </h1>
+            <Image
+              src="/images/BH.png"
+              alt="Black Home Logo"
+              width={110}
+              height={110}
+              priority
+              className="object-contain"
+            />
 
-    <p className="text-white/50 text-[10px] tracking-[0.35em]">
-      DISEÑO Y DECORACIÓN
-    </p>
+            <div>
 
-  </div>
+              <h1 className="text-white text-xl md:text-2xl font-semibold tracking-[0.18em]">
+                BLACK HOME
+              </h1>
 
-</Link>
-          <nav className="hidden md:flex gap-10 text-sm text-white font-medium">
+              <p className="text-white/50 text-[10px] tracking-[0.35em]">
+                DISEÑO Y DECORACIÓN
+              </p>
 
-            <Link
-              href="/"
-              className="hover:text-white/80 transition duration-300"
-            >
-              Inicio
-            </Link>
+            </div>
 
-            <Link
-              href="/productos"
-              className="hover:text-white/80 transition duration-300"
-            >
-              Productos
-            </Link>
-
-            <Link
-              href="/cotizador"
-              className="relative pb-2"
-            >
-
-              Cotizador
-
-              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white rounded-full" />
-
-            </Link>
-
-           <a
-  href="#contacto"
-  className="hover:text-white/80 transition duration-300"
->
-  Contacto
-</a>
-
-          </nav>
+          </Link>
 
         </div>
 
       </header>
 
       {/* CONTENIDO */}
-      <div className="relative z-10 max-w-5xl mx-auto px-5 pt-36 pb-16">
 
-        {/* CONTAINER GLOBAL */}
-        <div className="bg-white/75 backdrop-blur-xl border border-white/40 rounded-[40px] shadow-[0_10px_60px_rgba(0,0,0,0.08)] p-6 md:p-8">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 md:px-6 pt-28 pb-16">
 
-          {/* TITULO */}
+        <div className="bg-white/95 backdrop-blur-xl rounded-[32px] border border-white shadow-[0_20px_80px_rgba(0,0,0,0.12)] p-5 md:p-8">
+
           <div className="text-center mb-10">
 
             <p className="text-[11px] tracking-[0.30em] uppercase text-[#c6a77b] font-semibold mb-3">
@@ -362,16 +266,17 @@ export default function Cotizador() {
               Cotizador
             </h1>
 
-            <p className="text-gray-500 text-sm md:text-base">
+            <p className="text-gray-500">
               Completa tus datos y calcula tu cotización personalizada
             </p>
 
           </div>
 
           {/* DATOS CLIENTE */}
-          <div className="bg-white rounded-[30px] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.06)] border border-black/5 mb-6">
 
-            <h2 className="text-[22px] font-semibold mb-5 text-[#c6a77b]">
+          <div className="bg-white rounded-[24px] p-6 shadow-xl border border-black/5 mb-6">
+
+            <h2 className="text-xl md:text-2xl font-semibold mb-5 text-[#c6a77b]">
               Datos del cliente
             </h2>
 
@@ -379,7 +284,7 @@ export default function Cotizador() {
 
               <input
                 placeholder="Nombre"
-                className="border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-black/30"
+                className="border border-gray-200 rounded-xl p-3"
                 onChange={(e) =>
                   setClient({
                     ...client,
@@ -390,7 +295,7 @@ export default function Cotizador() {
 
               <input
                 placeholder="Apellidos"
-                className="border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-black/30"
+                className="border border-gray-200 rounded-xl p-3"
                 onChange={(e) =>
                   setClient({
                     ...client,
@@ -401,7 +306,7 @@ export default function Cotizador() {
 
               <input
                 placeholder="Teléfono"
-                className="border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-black/30"
+                className="border border-gray-200 rounded-xl p-3"
                 onChange={(e) =>
                   setClient({
                     ...client,
@@ -412,7 +317,7 @@ export default function Cotizador() {
 
               <input
                 placeholder="Correo"
-                className="border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-black/30"
+                className="border border-gray-200 rounded-xl p-3"
                 onChange={(e) =>
                   setClient({
                     ...client,
@@ -420,10 +325,9 @@ export default function Cotizador() {
                   })
                 }
               />
-
-              <input
+                            <input
                 placeholder="Dirección"
-                className="border border-gray-200 rounded-xl p-3 text-sm outline-none md:col-span-2 focus:border-black/30"
+                className="border border-gray-200 rounded-xl p-3 md:col-span-2"
                 onChange={(e) =>
                   setClient({
                     ...client,
@@ -433,7 +337,7 @@ export default function Cotizador() {
               />
 
               <select
-                className="border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-black/30"
+                className="border border-gray-200 rounded-xl p-3"
                 onChange={(e) =>
                   setClient({
                     ...client,
@@ -442,17 +346,15 @@ export default function Cotizador() {
                   })
                 }
               >
-
                 <option>Selecciona región</option>
 
                 {regiones.map((r) => (
                   <option key={r}>{r}</option>
                 ))}
-
               </select>
 
               <select
-                className="border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-black/30"
+                className="border border-gray-200 rounded-xl p-3"
                 onChange={(e) =>
                   setClient({
                     ...client,
@@ -460,13 +362,11 @@ export default function Cotizador() {
                   })
                 }
               >
-
                 <option>Selecciona comuna</option>
 
                 {comunas[client.region]?.map((c) => (
                   <option key={c}>{c}</option>
                 ))}
-
               </select>
 
             </div>
@@ -474,9 +374,10 @@ export default function Cotizador() {
           </div>
 
           {/* CORTINAS */}
-          <div className="bg-white rounded-[30px] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.06)] border border-black/5 mb-6">
 
-            <h2 className="text-[22px] font-semibold mb-5 text-[#c6a77b]">
+          <div className="bg-white rounded-[24px] p-6 shadow-xl border border-black/5 mb-6">
+
+            <h2 className="text-xl md:text-2xl font-semibold mb-5 text-[#c6a77b]">
               Cotiza tus cortinas
             </h2>
 
@@ -484,7 +385,7 @@ export default function Cotizador() {
 
               <select
                 value={form.type}
-                className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-black/30"
+                className="w-full border border-gray-200 rounded-xl p-3"
                 onChange={(e) =>
                   setForm({
                     ...form,
@@ -493,15 +394,15 @@ export default function Cotizador() {
                 }
               >
                 <option>Blackout</option>
-                <option>Duo</option>
                 <option>Sunscreen</option>
+                <option>Duo</option>
                 <option>Vertical</option>
               </select>
 
               <input
                 type="number"
                 placeholder="Cantidad"
-                className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-black/30"
+                className="w-full border border-gray-200 rounded-xl p-3"
                 onChange={(e) =>
                   setForm({
                     ...form,
@@ -515,7 +416,7 @@ export default function Cotizador() {
                 <input
                   type="number"
                   placeholder="Ancho (m)"
-                  className="border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-black/30"
+                  className="border border-gray-200 rounded-xl p-3"
                   onChange={(e) =>
                     setForm({
                       ...form,
@@ -527,7 +428,7 @@ export default function Cotizador() {
                 <input
                   type="number"
                   placeholder="Alto (m)"
-                  className="border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-black/30"
+                  className="border border-gray-200 rounded-xl p-3"
                   onChange={(e) =>
                     setForm({
                       ...form,
@@ -538,21 +439,25 @@ export default function Cotizador() {
 
               </div>
 
-              <input
-                type="number"
-                placeholder="Precio por m²"
-                className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-black/30"
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    pricePerM2: Number(e.target.value),
-                  })
-                }
-              />
+              <div className="text-sm text-gray-500 bg-[#f8f8f8] p-4 rounded-xl">
+
+                {form.type === "Blackout" &&
+                  "Precio automático: $24.000 por m²"}
+
+                {form.type === "Sunscreen" &&
+                  "Precio automático: $25.000 por m²"}
+
+                {form.type === "Duo" &&
+                  "Solicitar cotización personalizada"}
+
+                {form.type === "Vertical" &&
+                  "Solicitar cotización personalizada"}
+
+              </div>
 
               <button
                 onClick={addItem}
-                className="w-full bg-black text-white py-3 rounded-xl text-sm font-medium hover:bg-neutral-800 transition"
+                className="w-full bg-black text-white py-3 rounded-xl font-medium hover:bg-neutral-800 transition"
               >
                 Agregar cortina
               </button>
@@ -562,11 +467,12 @@ export default function Cotizador() {
           </div>
 
           {/* RESUMEN */}
-          <div className="bg-white rounded-[30px] shadow-[0_10px_40px_rgba(0,0,0,0.06)] border border-black/5 overflow-hidden">
+
+          <div className="bg-white rounded-[24px] shadow-xl border border-black/5 overflow-hidden">
 
             <div className="p-5 border-b border-gray-100">
 
-              <h2 className="text-[22px] font-semibold text-[#c6a77b]">
+              <h2 className="text-xl md:text-2xl font-semibold text-[#c6a77b]">
                 Resumen cotización
               </h2>
 
@@ -574,8 +480,8 @@ export default function Cotizador() {
 
             {items.length === 0 ? (
 
-              <div className="p-6 text-center text-gray-500 text-sm">
-                Aún no agregas cortinas a la cotización
+              <div className="p-8 text-center text-gray-500">
+                Aún no agregas productos
               </div>
 
             ) : (
@@ -584,7 +490,7 @@ export default function Cotizador() {
 
                 <div
                   key={idx}
-                  className="p-5 border-b border-gray-100 flex justify-between items-center"
+                  className="p-4 border-b border-gray-100 flex justify-between items-center"
                 >
 
                   <div>
@@ -593,14 +499,15 @@ export default function Cotizador() {
                       {i.type}
                     </p>
 
-                    <p className="text-gray-500 text-xs">
+                    <p className="text-xs text-gray-500">
                       {i.qty} unidad · {area(i).toFixed(2)} m²
                     </p>
 
                   </div>
 
-                  <p className="font-bold text-lg">
-                    ${subtotal(i).toLocaleString("es-CL")}
+                  <p className="font-bold">
+                    $
+                    {subtotal(i).toLocaleString("es-CL")}
                   </p>
 
                 </div>
@@ -609,17 +516,26 @@ export default function Cotizador() {
 
             )}
 
-            <div className="p-5">
+            <div className="p-6">
 
-              <div className="text-right text-2xl font-bold mb-4">
-                Total: ${total.toLocaleString("es-CL")}
+              <div className="flex justify-between items-center mb-5">
+
+                <span className="text-gray-500">
+                  Total estimado
+                </span>
+
+                <span className="text-2xl font-bold">
+                  $
+                  {total.toLocaleString("es-CL")}
+                </span>
+
               </div>
 
               <button
                 onClick={sendQuote}
-                className="w-full bg-black text-white py-3 rounded-xl text-sm font-semibold hover:bg-neutral-800 transition"
+                className="w-full bg-black text-white py-4 rounded-xl font-semibold hover:bg-neutral-800 transition"
               >
-                Enviar cotización
+                Solicitar Cotización
               </button>
 
             </div>
@@ -631,35 +547,45 @@ export default function Cotizador() {
       </div>
 
       {/* FOOTER */}
-      <footer className="bg-black text-white py-14 px-6 relative z-10">
 
-        <div className="max-w-5xl mx-auto text-center text-sm text-gray-400">
+      <footer className="bg-black text-white py-14 px-6 relative z-10 mt-20">
 
-          <p className="text-white text-lg font-bold mb-3">
+        <div className="max-w-5xl mx-auto text-center">
+
+          <p className="text-2xl font-bold mb-3">
             BLACK HOME
           </p>
 
-          <p>
-            📍 Santiago · ✉️ contacto@blackhome.cl · 📞 +56 9 3400 7366
+          <p className="text-gray-400">
+            Diseño y Decoración
           </p>
 
-          <p className="mt-5 text-gray-500">
-            © 2026 Blackhome. Todos los derechos reservados.
+          <p className="mt-4 text-gray-500">
+            📞 +56 9 3400 7366
+          </p>
+
+          <p className="text-gray-500">
+            contacto@blackhome.cl
+          </p>
+
+          <p className="mt-8 text-gray-600 text-sm">
+            © 2026 Black Home. Todos los derechos reservados.
           </p>
 
         </div>
 
       </footer>
 
-      {/* WHATSAPP FLOAT */}
+      {/* WHATSAPP */}
+
       <a
         href="https://wa.me/56934007366"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50"
+        className="fixed bottom-5 right-5 z-50"
       >
 
-        <div className="w-14 h-14 rounded-full bg-[#25D366] shadow-xl flex items-center justify-center hover:scale-110 transition duration-300">
+        <div className="flex items-center gap-3 bg-[#25D366] px-5 py-3 rounded-full shadow-[0_10px_40px_rgba(37,211,102,0.4)] hover:scale-105 transition-all">
 
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -667,8 +593,12 @@ export default function Cotizador() {
             fill="white"
             className="w-7 h-7"
           >
-            <path d="M16 .396C7.164.396 0 7.56 0 16.396c0 3.122.904 6.034 2.463 8.49L0 32l7.336-2.414a15.94 15.94 0 0 0 8.664 2.543c8.836 0 16-7.164 16-16S24.836.396 16 .396zm0 29.09a13.06 13.06 0 0 1-6.654-1.82l-.477-.283-4.35 1.43 1.416-4.24-.31-.49a13.01 13.01 0 0 1-2.005-6.947c0-7.18 5.84-13.02 13.02-13.02s13.02 5.84 13.02 13.02-5.84 13.02-13.02 13.02zm7.144-9.77c-.39-.196-2.31-1.14-2.67-1.27-.36-.13-.62-.196-.88.197-.26.39-1.01 1.27-1.24 1.53-.23.26-.46.29-.85.1-.39-.2-1.64-.6-3.13-1.92-1.16-1.03-1.94-2.3-2.17-2.69-.23-.39-.025-.6.17-.79.18-.18.39-.46.59-.69.2-.23.26-.39.39-.65.13-.26.07-.49-.03-.69-.1-.2-.88-2.12-1.2-2.9-.32-.77-.65-.67-.88-.68h-.75c-.26 0-.69.1-1.05.49-.36.39-1.38 1.35-1.38 3.29s1.41 3.82 1.61 4.08c.2.26 2.78 4.25 6.74 5.96.94.4 1.67.64 2.24.82.94.3 1.8.26 2.48.16.76-.11 2.31-.94 2.64-1.84.33-.9.33-1.67.23-1.84-.1-.16-.36-.26-.75-.46z"/>
+            <path d="M16 .396C7.164.396 0 7.56 0 16.396c0 3.122.904 6.034 2.463 8.49L0 32l7.336-2.414a15.94 15.94 0 0 0 8.664 2.543c8.836 0 16-7.164 16-16S24.836.396 16 .396z"/>
           </svg>
+
+          <span className="hidden md:block text-white font-semibold">
+            WhatsApp
+          </span>
 
         </div>
 

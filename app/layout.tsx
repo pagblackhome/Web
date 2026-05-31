@@ -3,17 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Black Home | Cortinas Modernas y Decoración en Chile",
-
   description:
     "Cortinas roller, blackout, duo y motorizadas en Chile. Diseño moderno y elegante.",
-
-  keywords: [
-    "cortinas roller",
-    "blackout",
-    "cortinas chile",
-    "roller duo",
-    "black home",
-  ],
 };
 
 export default function RootLayout({
@@ -23,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body>{children}</body>
+      <body className="bg-white text-black">
+        {children}
+      </body>
     </html>
   );
 }

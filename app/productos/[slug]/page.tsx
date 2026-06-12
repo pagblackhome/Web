@@ -1,8 +1,32 @@
 "use client";
 
+
+import Header from "../../../components/Header";
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
+import { Menu } from "lucide-react";
+
+import {
+  User,
+  Phone,
+  Mail,
+  MapPin,
+  Map,
+  Building2,
+  Blinds,
+  Receipt,
+  ShieldCheck,
+  Ruler,
+  Truck,
+  Plus,
+  Info,
+} from "lucide-react";
+import {
+  FaInstagram,
+  FaFacebookF,
+  FaWhatsapp,
+} from "react-icons/fa";
 
 const product = {
   name: "Roller Duo Beige",
@@ -16,14 +40,14 @@ const product = {
   material: "Polyester Premium",
   opacity: "Semi Blackout",
   warranty: "12 meses",
-  installation: "Instalación incluida",
+  installation: "",
 };
 
 const relatedProducts = [
-  { name: "Roller Blackout", price: "$79.990", image: "/images/20.jpg" },
-  { name: "Roller Screen", price: "$69.990", image: "/images/25.jpg" },
-  { name: "Roller Duo Gris", price: "$89.990", image: "/images/33.jpg" },
-  { name: "Roller Sunscreen", price: "$69.990", image: "/images/20.jpg" },
+  { name: "Roller Blackout", price: "$25.990", image: "/images/20.jpg" },
+  { name: "Roller Screen", price: "$25.990", image: "/images/25.jpg" },
+  { name: "Roller Duo Gris", price: "$25.990", image: "/images/33.jpg" },
+  { name: "Roller Sunscreen", price: "$25.990", image: "/images/20.jpg" },
 ];
 
 export default function ProductPage() {
@@ -43,7 +67,9 @@ export default function ProductPage() {
     pricePerM2;
 
   return (
+    
     <main className="min-h-screen bg-[#f5f1eb] text-black overflow-x-hidden relative">
+       <Header />
 
       {/* FONDO */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -52,44 +78,8 @@ export default function ProductPage() {
         <div className="absolute bottom-[250px] right-0 w-[240px] h-[240px] bg-[#6e8d63]/20 rounded-tl-[120px]" />
       </div>
 
-      {/* HEADER */}
-      <header className="fixed top-0 left-0 w-full z-50 bg-black/50 backdrop-blur-xl border-b border-white/10 h-20">
-        <div className="max-w-7xl mx-auto flex justify-between items-center pl-2 pr-6 md:pl-4 md:pr-10 h-full">
 
-          <div className="flex items-center gap-2">
-            <Image
-              src="/images/BH.png"
-              alt="Black Home Logo"
-              width={160}
-              height={160}
-              priority
-              className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.6)]"
-            />
 
-            <div>
-              <h1 className="text-white text-2xl font-semibold tracking-[0.18em]">
-                BLACK HOME
-              </h1>
-              <p className="text-white/50 text-[10px] tracking-[0.35em]">
-                DISEÑO Y DECORACIÓN
-              </p>
-            </div>
-          </div>
-
-          <nav className="hidden md:flex items-center gap-10 text-sm text-white font-medium">
-            <Link href="/">Inicio</Link>
-            <Link href="/productos">Productos</Link>
-
-            <button onClick={() => setOpenGuide(true)}>
-              Cómo medir mi cortina
-            </button>
-
-            <Link href="/cotizador">Cotizador</Link>
-
-            <a href="#contacto">Contacto</a>
-          </nav>
-        </div>
-      </header>
 
       {/* POPUP MEDIDAS */}
       {openGuide && (
@@ -326,39 +316,218 @@ export default function ProductPage() {
 
         </div>
       </section>
+      <a
+  href="https://wa.me/56934007366"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="fixed bottom-6 right-6 z-50"
+>
+  <div className="
+    w-14 h-14
+    rounded-full
+    bg-[#25D366]
+    shadow-lg
+    flex items-center justify-center
+    hover:scale-110
+    transition-transform duration-300
+  ">
+    <FaWhatsapp size={28} className="text-white" />
+  </div>
+</a>
 
-      {/* FOOTER */}
-      <footer className="bg-black text-white py-14 px-6">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-4 gap-10">
-
-          <div>
-            <h3 className="text-3xl font-bold mb-5">BLACK HOME</h3>
-            <p className="text-white/60">
-              Diseño y decoración moderna.
-            </p>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-5">Navegación</h4>
-            <div className="flex flex-col gap-2 text-white/60">
-              <Link href="/">Inicio</Link>
-              <Link href="/productos">Productos</Link>
-              <Link href="/cotizador">Cotizador</Link>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-5">Categorías</h4>
-            <p className="text-white/60">Roller / Blackout / Screen</p>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-5">Contacto</h4>
-            <p className="text-white/60">Chile</p>
-          </div>
-
-        </div>
-      </footer>
+         {/* FOOTER */}
+   
+         <footer
+     className="
+     bg-[#070707]
+     relative
+     mt-24
+     overflow-hidden
+     border-t
+     border-[#c6a77b]/15
+   "
+   >
+   
+     {/* brillo premium */}
+   
+     <div className="absolute inset-0 pointer-events-none">
+   
+       <div
+         className="
+         absolute
+         top-0
+         left-1/2
+         -translate-x-1/2
+         w-[900px]
+         h-[300px]
+         bg-[#c6a77b]/5
+         blur-[180px]
+         "
+       />
+   
+     </div>
+   
+     <div className="relative z-10 max-w-7xl mx-auto px-8 py-8">
+   
+       <div className="grid lg:grid-cols-4 gap-8">
+   
+         {/* LOGO */}
+   
+         <div>
+   
+           <Image
+             src="/images/BH.png"
+       alt="Black Home"
+       width={190}
+       height={80}
+       priority
+       className="
+         object-contain
+         drop-shadow-[0_0_10px_rgba(255,255,255,0.9)]
+         drop-shadow-[0_0_25px_rgba(255,255,255,0.5)]
+       "
+           />
+   
+         </div>
+   
+   
+         {/* CONTACTO */}
+   
+         <div className="space-y-7">
+   
+           <div className="flex items-center gap-4">
+   
+             <Phone
+               size={24}
+               className="text-[#c6a77b]"
+             />
+   
+             <span className="text-gray-200 text-lg">
+               +56 9 3400 7366
+             </span>
+   
+           </div>
+   
+           <div className="flex items-center gap-4">
+   
+             <Mail
+               size={24}
+               className="text-[#c6a77b]"
+             />
+   
+             <span className="text-gray-200 text-lg">
+               contacto@blackhome.cl
+             </span>
+   
+           </div>
+   
+           <div className="flex items-center gap-4">
+   
+             <MapPin
+               size={24}
+               className="text-[#c6a77b]"
+             />
+   
+             <span className="text-gray-200 text-lg">
+               Santiago, Chile
+             </span>
+   
+           </div>
+   
+         </div>
+   
+         {/* REDES */}
+   
+         <div className="border-l border-[#c6a77b]/40 pl-10">
+   
+           <h3
+             className="
+             text-[#c6a77b]
+             text-2xl
+             font-semibold
+             mb-8
+             tracking-wide
+             "
+           >
+             SÍGUENOS
+           </h3>
+   
+           <div className="flex gap-5">
+   
+             <a
+               href="#"
+               className="
+   w-14 h-14
+   rounded-full
+   border
+   border-[#c6a77b]
+   bg-[#c6a77b]/10
+   flex items-center
+   justify-center
+   text-[#c6a77b]
+   shadow-[0_0_15px_rgba(198,167,123,0.35)]
+   "
+             >
+              <FaInstagram size={24} />
+             </a>
+   
+             <a
+               href="#"
+               className="
+   w-14 h-14
+   rounded-full
+   border
+   border-[#c6a77b]
+   bg-[#c6a77b]/10
+   flex items-center
+   justify-center
+   text-[#c6a77b]
+   shadow-[0_0_15px_rgba(198,167,123,0.35)]
+   "
+             >
+               <FaFacebookF size={24} />
+             </a>
+   
+             <a
+               href="https://wa.me/56934007366"
+               target="_blank"
+               className="
+   w-14 h-14
+   rounded-full
+   border
+   border-[#c6a77b]
+   bg-[#c6a77b]/10
+   flex items-center
+   justify-center
+   text-[#c6a77b]
+   shadow-[0_0_15px_rgba(198,167,123,0.35)]
+   "
+             >
+               <Phone size={22} />
+             </a>
+   
+           </div>
+   
+         </div>
+   
+       </div>
+   
+       <div
+         className="
+         mt-16
+         pt-8
+         border-t
+         border-[#c6a77b]/20
+         text-center
+         text-gray-500
+         "
+       >
+         © 2026 Black Home. Todos los derechos reservados.
+       </div>
+   
+     </div>
+   
+   </footer>
 
     </main>
   );

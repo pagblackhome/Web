@@ -1,15 +1,35 @@
-
 "use client";
 
+import Header from "../components/Header";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useRef } from "react";
+
+import {
+  User,
+  Phone,
+  Mail,
+  MapPin,
+  Map,
+  Building2,
+  Blinds,
+  Receipt,
+  ShieldCheck,
+  Ruler,
+  Truck,
+  Plus,
+  Info,
+} from "lucide-react";
+
+import {
+  FaInstagram,
+  FaFacebookF,
+  FaWhatsapp,
+} from "react-icons/fa";
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [openGuide, setOpenGuide] = useState(false);
-
-  
 
   const galleryImages = [
     "/images/vertilux_rollershades_008.jpg",
@@ -29,30 +49,11 @@ export default function Home() {
 
   return (
     <>
+      <Header />
+
       <main className="min-h-screen bg-white text-black overflow-x-hidden">
-
-      {/* HEADER */}
-      <header className="fixed top-0 left-0 w-full z-50 bg-black/60 backdrop-blur-xl border-b border-white/10 h-20">
-        <div className="max-w-7xl mx-auto flex justify-between items-center px-6 h-full">
-
-          <div className="flex items-center gap-3">
-            <Image src="/images/BH.png" alt="Black Home" width={140} height={140} />
-            <div>
-              <h1 className="text-white text-2xl font-semibold tracking-[0.18em]">BLACK HOME</h1>
-              <p className="text-white/50 text-[10px] tracking-[0.35em]">DISEÑO Y DECORACIÓN</p>
-            </div>
-          </div>
-
-          <nav className="hidden md:flex items-center gap-8 text-white text-sm">
-            <Link href="/">Inicio</Link>
-            <Link href="/productos">Productos</Link>
-            <button onClick={() => setOpenGuide(true)}>Cómo medir</button>
-            <Link href="/cotizador">Cotizador</Link>
-            <a href="#contacto">Contacto</a>
-          </nav>
-
-        </div>
-      </header>
+      
+ 
             {/* HERO */}
       <section className="relative h-[90vh] mt-20">
         <Image src="/images/frontpage.jpg" alt="Hero" fill className="object-cover" />
@@ -87,30 +88,43 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SERVICIO */}
-      <section className="relative py-32">
-        <Image src="/images/servicio.png" alt="Servicio" fill className="object-cover" />
-        <div className="absolute inset-0 bg-white/30" />
+  {/* SERVICIO */}
+<section className="relative py-32">
+  <Image
+    src="/images/servicio.png"
+    alt="Servicio"
+    fill
+    className="object-cover"
+  />
+  <div className="absolute inset-0 bg-white/10" />
 
-        <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
-          <h2 className="text-4xl font-bold mb-4">Servicio Premium</h2>
-          <p>Instalación profesional y asesoría en todo Chile.</p>
-        </div>
-      </section>
+  <div className="relative z-10 text-center max-w-3xl mx-auto px-6">
+    <h2 className="text-5xl font-light tracking-wide mb-6 text-gray-900">
+      Servicios
+    </h2>
+
+    <p className="text-lg leading-relaxed text-gray-700 mb-5 font-light">
+      Nos dedicamos a crear soluciones de cortinaje a medida que combinan diseño, funcionalidad y calidad en cada detalle. Entendemos que cada espacio es único, por eso ofrecemos una atención personalizada que va desde la elección del producto ideal hasta su instalación final.
+    </p>
+
+    <p className="text-lg leading-relaxed text-gray-700 font-light">
+      Nuestro compromiso es entregar resultados que aporten estilo, confort y durabilidad, transformando ambientes en lugares más acogedores y con identidad propia.
+    </p>
+  </div>
+</section>
             {/* BENEFICIOS (SIN FIGURAS DE COLORES) */}
       <section className="py-16 text-center bg-white">
         <h2 className="text-4xl font-bold">Envíos</h2>
-        <p className="text-gray-500 mt-2">Rapidos y seguros</p>
 
-        <div className="mt-10 max-w-5xl mx-auto bg-[#f7f4ee] rounded-3xl p-10 shadow">
-          <Image
-            src="/images/despacho_banner.webp"
-            alt="Beneficios"
-            width={1400}
-            height={500}
-            className="w-full object-contain"
-          />
-        </div>
+<div className="mt-10 max-w-7xl mx-auto bg-[#f7f4ee] rounded-3xl p-6 shadow">
+  <Image
+    src="/images/despacho_banner.webp"
+    alt="Beneficios"
+    width={1600}
+    height={600}
+    className="w-full h-[350px] md:h-[450px] object-cover rounded-2xl"
+  />
+</div>
       </section>
 
    {/* GALERÍA */}
@@ -277,17 +291,219 @@ export default function Home() {
     </div>
   </div>
 </section>
-      {/* FOOTER CON LOGO */}
-      <footer className="bg-black text-white py-10 text-center">
-        <Image src="/images/BH.png" alt="logo" width={80} height={80} className="mx-auto mb-4" />
-        <p>Black Home © 2026</p>
-      </footer>
+      {/* FOOTER */}
+
+      <footer
+  className="
+  bg-[#070707]
+  relative
+  mt-24
+  overflow-hidden
+  border-t
+  border-[#c6a77b]/15
+"
+>
+
+  {/* brillo premium */}
+
+  <div className="absolute inset-0 pointer-events-none">
+
+    <div
+      className="
+      absolute
+      top-0
+      left-1/2
+      -translate-x-1/2
+      w-[900px]
+      h-[300px]
+      bg-[#c6a77b]/5
+      blur-[180px]
+      "
+    />
+
+  </div>
+
+  <div className="relative z-10 max-w-7xl mx-auto px-8 py-8">
+
+    <div className="grid lg:grid-cols-4 gap-8">
+
+      {/* LOGO */}
+
+      <div>
+
+        <Image
+          src="/images/BH.png"
+    alt="Black Home"
+    width={190}
+    height={80}
+    priority
+    className="
+      object-contain
+      drop-shadow-[0_0_10px_rgba(255,255,255,0.9)]
+      drop-shadow-[0_0_25px_rgba(255,255,255,0.5)]
+    "
+        />
+
+      </div>
+
+
+      {/* CONTACTO */}
+
+      <div className="space-y-7">
+
+        <div className="flex items-center gap-4">
+
+          <Phone
+            size={24}
+            className="text-[#c6a77b]"
+          />
+
+          <span className="text-gray-200 text-lg">
+            +56 9 3400 7366
+          </span>
+
+        </div>
+
+        <div className="flex items-center gap-4">
+
+          <Mail
+            size={24}
+            className="text-[#c6a77b]"
+          />
+
+          <span className="text-gray-200 text-lg">
+            contacto@blackhome.cl
+          </span>
+
+        </div>
+
+        <div className="flex items-center gap-4">
+
+          <MapPin
+            size={24}
+            className="text-[#c6a77b]"
+          />
+
+          <span className="text-gray-200 text-lg">
+            Santiago, Chile
+          </span>
+
+        </div>
+
+      </div>
+
+      {/* REDES */}
+
+      <div className="border-l border-[#c6a77b]/40 pl-10">
+
+        <h3
+          className="
+          text-[#c6a77b]
+          text-2xl
+          font-semibold
+          mb-8
+          tracking-wide
+          "
+        >
+          SÍGUENOS
+        </h3>
+
+        <div className="flex gap-5">
+
+          <a
+            href="#"
+            className="
+w-14 h-14
+rounded-full
+border
+border-[#c6a77b]
+bg-[#c6a77b]/10
+flex items-center
+justify-center
+text-[#c6a77b]
+shadow-[0_0_15px_rgba(198,167,123,0.35)]
+"
+          >
+           <FaInstagram size={24} />
+          </a>
+
+          <a
+            href="#"
+            className="
+w-14 h-14
+rounded-full
+border
+border-[#c6a77b]
+bg-[#c6a77b]/10
+flex items-center
+justify-center
+text-[#c6a77b]
+shadow-[0_0_15px_rgba(198,167,123,0.35)]
+"
+          >
+            <FaFacebookF size={24} />
+          </a>
+
+          <a
+            href="https://wa.me/56934007366"
+            target="_blank"
+            className="
+w-14 h-14
+rounded-full
+border
+border-[#c6a77b]
+bg-[#c6a77b]/10
+flex items-center
+justify-center
+text-[#c6a77b]
+shadow-[0_0_15px_rgba(198,167,123,0.35)]
+"
+          >
+            <Phone size={22} />
+          </a>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div
+      className="
+      mt-16
+      pt-8
+      border-t
+      border-[#c6a77b]/20
+      text-center
+      text-gray-500
+      "
+    >
+      © 2026 Black Home. Todos los derechos reservados.
+    </div>
+
+  </div>
+
+</footer>
 
       {/* WHATSAPP */}
-      <a href="https://wa.me/56934007366" className="fixed bottom-5 right-5 bg-green-500 p-4 rounded-full">
-        WA
-      </a>
-
+     <a
+  href="https://wa.me/56934007366"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="fixed bottom-6 right-6 z-50"
+>
+  <div className="
+    w-14 h-14
+    rounded-full
+    bg-[#25D366]
+    shadow-lg
+    flex items-center justify-center
+    hover:scale-110
+    transition-transform duration-300
+  ">
+    <FaWhatsapp size={28} className="text-white" />
+  </div>
+</a>
     </main>
     </>
   );

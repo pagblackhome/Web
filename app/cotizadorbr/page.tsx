@@ -17,7 +17,6 @@ import {
   Truck,
   Plus,
   Info,
-  Trash2,
 } from "lucide-react";
 import {
   FaInstagram,
@@ -186,7 +185,7 @@ const [form, setForm] = useState<Item>({
     return;
   }
 
-  setItems((prev) => [...prev, { ...form }]);
+  setItems((prev) => [...prev, form]);
 
   setForm({
     type: "Blackout",
@@ -196,11 +195,6 @@ const [form, setForm] = useState<Item>({
     width: 0,
     height: 0,
   });
-};
-const removeItem = (index: number) => {
-  setItems((prev) =>
-    prev.filter((_, i) => i !== index)
-  );
 };
   const area = (i: Item) => i.width * i.height;
 
@@ -963,80 +957,27 @@ mt-8
               items.map((i, idx) => (
 
                 <div
-  key={idx}
-  className="relative p-4 border-b border-gray-100"
->
+                  key={idx}
+                  className="p-4 border-b border-gray-100 flex justify-between items-center"
+                >
 
-  <button
-    onClick={() => removeItem(idx)}
-    className="
-      absolute
-      top-3
-      right-3
-      p-2
-      rounded-full
-      text-gray-400
-      hover:text-red-500
-      hover:bg-red-50
-      transition-all
-    "
-  >
-    <Trash2 size={18} />
-  </button>
+                  <div>
 
-                 <div className="flex-1">
+                    <p className="font-semibold">
+                      {i.type}
+                    </p>
 
-  <p className="font-semibold text-[#111]">
-    {i.type}
-  </p>
+                    <p className="text-xs text-gray-500">
+                      {i.qty} unidad · {area(i).toFixed(2)} m²
+                    </p>
 
-  <div className="mt-1 text-sm text-gray-600 space-y-1">
+                  </div>
 
-    <p>
-      <span className="font-medium">Modelo:</span> {i.model}
-    </p>
+                  <p className="font-bold">
+                    $
+                    {subtotal(i).toLocaleString("es-CL")}
+                  </p>
 
-    <p>
-      <span className="font-medium">Color:</span> {i.color}
-    </p>
-
-    <p>
-      <span className="font-medium">Cantidad:</span> {i.qty}
-    </p>
-
-    <p>
-      <span className="font-medium">Medidas:</span>{" "}
-      {i.width} m × {i.height} m
-    </p>
-
-    <p>
-      <span className="font-medium">Área:</span>{" "}
-      {area(i).toFixed(2)} m²
-    </p>
-
-    <p>
-      <span className="font-medium">Precio unitario:</span>{" "}
-      $
-      {(
-        area(i) *
-        (curtainPrices[i.type] || 0)
-      ).toLocaleString("es-CL")}
-    </p>
-
-  </div>
-
-</div>
-
-<div className="text-right">
-  <p className="text-xs text-gray-500">
-    Subtotal
-  </p>
-
-  <p className="font-bold text-lg text-[#c6a77b]">
-    $
-    {subtotal(i).toLocaleString("es-CL")}
-  </p>
-</div>
                 </div>
 
               ))

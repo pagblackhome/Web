@@ -6,8 +6,6 @@ import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
 type Item = {
   type: string;
-  model: string;
-  color: string;
   qty: number;
   width: number;
   height: number;
@@ -81,11 +79,11 @@ async function generatePdf(
     await pdfDoc.embedPng(logoBytes);
 
   const logoDims =
-  logoImage.scale(0.13);
+    logoImage.scale(0.18);
 
   page.drawImage(logoImage, {
     x: 40,
-    y: height - 120,
+    y: height - 140,
     width: logoDims.width,
     height: logoDims.height,
   });
@@ -320,95 +318,21 @@ async function generatePdf(
     }
   );
 
-// ========================
-// MENSAJE FINAL
-// ========================
+  y -= 50;
 
-y -= 40;
+  page.drawText(
+    "Gracias por preferir Black Home",
+    {
+      x: 40,
+      y,
+      size: 11,
+      font,
+    }
+  );
 
-page.drawText(
-  "Gracias por preferir Black Home.",
-  {
-    x: 40,
-    y,
-    size: 11,
-    font,
-  }
-);
-
-page.drawText(
-  "Esta cotización es referencial y puede variar según medidas finales.",
-  {
-    x: 40,
-    y: y - 18,
-    size: 9,
-    font,
-  }
-);
-
-// ========================
-// FOOTER REAL
-// ========================
-
-page.drawRectangle({
-  x: 0,
-  y: 0,
-  width: 595,
-  height: 55,
-  color: rgb(
-    0.12,
-    0.12,
-    0.12
-  ),
-});
-
-page.drawText(
-  "BLACK HOME",
-  {
-    x: 40,
-    y: 32,
-    size: 12,
-    font,
-    color: rgb(1, 1, 1),
-  }
-);
-
-page.drawText(
-  "Diseño y Decoración",
-  {
-    x: 40,
-    y: 16,
-    size: 9,
-    font,
-    color: rgb(1, 1, 1),
-  }
-);
-
-page.drawText(
-  "contacto@blackhome.cl",
-  {
-    x: 220,
-    y: 24,
-    size: 9,
-    font,
-    color: rgb(1, 1, 1),
-  }
-);
-
-page.drawText(
-  "+56 9 XXXX XXXX",
-  {
-    x: 430,
-    y: 24,
-    size: 9,
-    font,
-    color: rgb(1, 1, 1),
-  }
-);
-
-return Buffer.from(
-  await pdfDoc.save()
-);
+  return Buffer.from(
+    await pdfDoc.save()
+  );
 }
 export async function POST(req: Request) {
   try {

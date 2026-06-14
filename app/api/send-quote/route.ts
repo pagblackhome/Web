@@ -28,22 +28,19 @@ const curtainPrices: Record<string, number> = {
   Sunscreen: 25000,
 };
 
-// ─── COLORES ────────────────────────────────────────────────
-const GOLD        = rgb(0.776, 0.655, 0.482); // #c6a77b
-const GOLD_DARK   = rgb(0.545, 0.424, 0.259); // #8b6c42
-const BLACK       = rgb(0.07, 0.07, 0.07);
-const DARK_BG     = rgb(0.10, 0.10, 0.10);    // header/footer
-const ACCENT_RED  = rgb(0.835, 0.290, 0.173); // #d54a2c
+// ─── PALETA ─────────────────────────────────────────────────
+const RED         = rgb(0.835, 0.290, 0.173); // #d54a2c  rojo Black Home
+const RED_DARK    = rgb(0.65,  0.18,  0.08);  // rojo oscuro labels
+const GRAY_900 = rgb(0.42, 0.42, 0.45); // gris elegante — reemplaza negro pesado
+const GRAY_700 = rgb(0.55, 0.55, 0.58); // gris medio-oscuro subheaders
+const GRAY_400    = rgb(0.62,  0.62,  0.64);  // gris medio labels
+const GRAY_200    = rgb(0.88,  0.88,  0.90);  // gris claro texto sobre oscuro
+const GRAY_100    = rgb(0.955, 0.955, 0.960); // fondo alternas tabla
+const GRAY_BORDER = rgb(0.80,  0.80,  0.82);  // bordes suaves
 const WHITE       = rgb(1, 1, 1);
-const GRAY_LIGHT  = rgb(0.97, 0.96, 0.94);    // filas alternas
-const GRAY_MID    = rgb(0.88, 0.85, 0.80);    // bordes suaves
-const GRAY_TEXT   = rgb(0.45, 0.45, 0.45);
+const CREAM       = rgb(0.985, 0.975, 0.965); // fondo general cálido
 
 // ─── HELPERS ────────────────────────────────────────────────
-function clamp(n: number, lo: number, hi: number) {
-  return Math.max(lo, Math.min(hi, n));
-}
-
 function drawRect(
   page: PDFPage,
   x: number, y: number,
@@ -54,42 +51,38 @@ function drawRect(
 ) {
   page.drawRectangle({ x, y, width: w, height: h, color });
   if (borderColor) {
-    page.drawRectangle({
-      x, y, width: w, height: h,
-      borderColor,
-      borderWidth,
-      color: undefined,
-    });
+    page.drawRectangle({ x, y, width: w, height: h, color: undefined, borderColor, borderWidth });
   }
 }
 
-function text(
+function txt(
   page: PDFPage,
   str: string,
   x: number, y: number,
   size: number,
   font: PDFFont,
-  color: RGB = BLACK
+  color: RGB = GRAY_900
 ) {
   page.drawText(str, { x, y, size, font, color });
 }
 
-function safeText(str: string, maxLen = 40): string {
+function safe(str: string, max = 38): string {
   if (!str) return "-";
-  return str.length > maxLen ? str.slice(0, maxLen - 1) + "…" : str;
+  return str.length > max ? str.slice(0, max - 1) + "…" : str;
 }
 
-function clp(amount: number): string {
-  return `$${Math.round(amount).toLocaleString("es-CL")}`;
+function clp(n: number): string {
+  return `$${Math.round(n).toLocaleString("es-CL")}`;
 }
 
-// ─── GENERADOR PRINCIPAL ────────────────────────────────────
+// ─── GENERADOR PDF ──────────────────────────────────────────
 async function generatePdf(
   client: Client,
   items: Item[],
   total: number,
   quoteNumber: string
 ): Promise<Buffer> {
+
   const pdfDoc = await PDFDocument.create();
   const W = 595, H = 842;
   const page = pdfDoc.addPage([W, H]);
@@ -97,263 +90,387 @@ async function generatePdf(
   const fontR = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const fontB = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-  // ── HEADER NEGRO ──────────────────────────────────────────
-  const HEADER_H = 110;
-  drawRect(page, 0, H - HEADER_H, W, HEADER_H, DARK_BG);
+  // ════════════════════════════════════════════════════════════
+  // HEADER — logo ocupa todo el ancho, número cotización abajo
+  // ════════════════════════════════════════════════════════════
+  const HEADER_H = 120;
 
-  // Franja dorada superior
-  drawRect(page, 0, H - 4, W, 4, GOLD);
+  // Fondo blanco del header
+  drawRect(page, 0, H - HEADER_H, W, HEADER_H, WHITE);
 
-  // Logo (si existe)
+  // Franja roja superior (3px)
+  drawRect(page, 0, H - 3, W, 3, RED);
+
+  // Logo centrado ocupando todo el ancho del header
   try {
     const logoPath = path.join(process.cwd(), "public", "images", "cotizacion.png");
     if (fs.existsSync(logoPath)) {
       const logoBytes = fs.readFileSync(logoPath);
       const logoImage = await pdfDoc.embedPng(logoBytes);
-      const dim = logoImage.scale(0.11);
+      // Escalar para que ocupe todo el ancho (de borde a borde)
+      const scale = W / logoImage.width;
+      const scaledH = logoImage.height * scale;
+      // Si la imagen escalada es más alta que el header, la recortamos al header
+      const drawH = Math.min(scaledH, HEADER_H);
+      const drawW = W;
       page.drawImage(logoImage, {
-        x: 36,
-        y: H - HEADER_H + (HEADER_H - dim.height) / 2,
-        width: dim.width,
-        height: dim.height,
+        x: 0,
+        y: H - HEADER_H + (HEADER_H - drawH) / 2,
+        width: drawW,
+        height: drawH,
       });
     }
-  } catch (_) { /* sin logo, continúa */ }
+  } catch (_) {
+    // Sin logo: mostrar nombre de empresa en su lugar
+    txt(page, "BLACK HOME", 36, H - 60, 26, fontB, GRAY_900);
+    txt(page, "DISEÑO Y DECORACIÓN", 36, H - 80, 10, fontR, GRAY_400);
+  }
 
-  // Nombre empresa
-  text(page, "BLACK HOME", 175, H - 52, 22, fontB, WHITE);
-
-  // Línea dorada decorativa bajo nombre
+  // Línea divisora bajo el header (roja)
   page.drawLine({
-    start: { x: 175, y: H - 60 },
-    end:   { x: 370, y: H - 60 },
-    thickness: 1,
-    color: GOLD,
-    dashArray: [3, 3],
+    start: { x: 0, y: H - HEADER_H },
+    end:   { x: W, y: H - HEADER_H },
+    thickness: 2,
+    color: RED,
   });
 
-  text(page, "DISEÑO Y DECORACIÓN", 175, H - 76, 9, fontR, GOLD);
-  text(page, "contacto@blackhome.cl", 175, H - 92, 8, fontR, GRAY_MID);
-  text(page, "+56 9 3400 7366", 175, H - 104, 8, fontR, GRAY_MID);
+  // ════════════════════════════════════════════════════════════
+  // BLOQUE COTIZACIÓN — número + fecha (debajo del header)
+  // ════════════════════════════════════════════════════════════
+  let y = H - HEADER_H - 16;
 
-  // Número cotización — parte derecha del header
-  const qLabel = "N° COTIZACIÓN";
-  const qLabelW = fontR.widthOfTextAtSize(qLabel, 8);
-  text(page, qLabel, W - 160, H - 48, 8, fontR, GOLD);
-  text(page, quoteNumber, W - 160, H - 64, 11, fontB, WHITE);
+  // Fondo crema de página
+  drawRect(page, 0, 0, W, H - HEADER_H, CREAM);
+
+  // Encabezado COTIZACIÓN + N° + Fecha en una franja
+  drawRect(page, 36, y - 28, W - 72, 28, RED);
+
+  txt(page, "COTIZACIÓN", 48, y - 20, 12, fontB, WHITE);
+
+  const qStr = `N° ${quoteNumber}`;
+  const qW   = fontB.widthOfTextAtSize(qStr, 10);
+  txt(page, qStr, W - 36 - qW - 10, y - 19, 10, fontB, WHITE);
+
   const dateStr = new Date().toLocaleDateString("es-CL", {
     day: "2-digit", month: "long", year: "numeric",
   });
-  text(page, `Fecha: ${dateStr}`, W - 160, H - 80, 8, fontR, GRAY_MID);
+  const dStr = `Fecha: ${dateStr}`;
+  const dW   = fontR.widthOfTextAtSize(dStr, 8);
+  txt(page, dStr, W - 36 - dW - 10, y - 33, 8, fontR, GRAY_400);
 
-  // ── TÍTULO COTIZACIÓN ─────────────────────────────────────
-  let y = H - HEADER_H - 30;
-  text(page, "COTIZACIÓN", 36, y, 20, fontB, BLACK);
+  y -= 42;
 
-  // Línea separadora
-  y -= 14;
-  page.drawLine({
-    start: { x: 36, y },
-    end:   { x: W - 36, y },
-    thickness: 0.8,
-    color: GOLD,
-  });
+  // ════════════════════════════════════════════════════════════
+  // DOS COLUMNAS: DATOS CLIENTE  |  DETALLE COTIZACIÓN
+  // ════════════════════════════════════════════════════════════
+  const COL_L    = 36;
+  const COL_R    = 316;
+  const COL_W    = 243;
+  const SEC_H    = 134; // altura total del bloque dos columnas
 
-  // ── DOS COLUMNAS: CLIENTE + RESUMEN ───────────────────────
-  y -= 18;
-  const colLeft  = 36;
-  const colRight = 310;
-  const colW     = 240;
-  const sectionH = 130;
+  // Fondos blancos con borde suave
+  drawRect(page, COL_L, y - SEC_H, COL_W, SEC_H, WHITE, GRAY_BORDER);
+  drawRect(page, COL_R, y - SEC_H, COL_W, SEC_H, WHITE, GRAY_BORDER);
 
-  // Fondo secciones
-  drawRect(page, colLeft,  y - sectionH, colW, sectionH, GRAY_LIGHT, GRAY_MID);
-  drawRect(page, colRight, y - sectionH, colW, sectionH, GRAY_LIGHT, GRAY_MID);
+  // Cabeceras rojas
+  drawRect(page, COL_L, y - 22, COL_W, 22, GRAY_900);
+drawRect(page, COL_R, y - 22, COL_W, 22, GRAY_900);
 
-  // Cabeceras de sección con franja dorada
-  drawRect(page, colLeft,  y - 22, colW, 22, GOLD);
-  drawRect(page, colRight, y - 22, colW, 22, GOLD);
-
-  text(page, "DATOS DEL CLIENTE",        colLeft  + 10, y - 15, 9, fontB, DARK_BG);
-  text(page, "DETALLE DE LA COTIZACIÓN", colRight + 10, y - 15, 9, fontB, DARK_BG);
+  txt(page, "DATOS DEL CLIENTE",        COL_L + 10, y - 15, 8.5, fontB, WHITE);
+  txt(page, "DETALLE DE LA COTIZACIÓN", COL_R + 10, y - 15, 8.5, fontB, WHITE);
 
   // Datos cliente
-  const clientLines = [
-    ["Nombre:",    `${safeText(client.name)} ${safeText(client.lastname)}`],
-    ["Correo:",    safeText(client.email, 34)],
-    ["Teléfono:", safeText(client.phone)],
-    ["Dirección:", safeText(client.address, 30)],
-    ["Región:",   safeText(client.region)],
-    ["Comuna:",   safeText(client.comuna)],
+  const clientRows: [string, string][] = [
+    ["Nombre",    safe(`${client.name} ${client.lastname}`, 30)],
+    ["Correo",    safe(client.email, 32)],
+    ["Teléfono",  safe(client.phone)],
+    ["Dirección", safe(client.address, 28)],
+    ["Región",    safe(client.region)],
+    ["Comuna",    safe(client.comuna)],
   ];
 
-  let ly = y - 34;
-  for (const [label, value] of clientLines) {
-    text(page, label, colLeft + 10, ly, 8, fontB, GOLD_DARK);
-    text(page, value, colLeft + 65, ly, 8, fontR, BLACK);
-    ly -= 16;
+  let ly = y - 36;
+  for (const [label, value] of clientRows) {
+    txt(page, `${label}:`, COL_L + 10, ly, 7.5, fontB, RED_DARK);
+    txt(page, value,       COL_L + 68,  ly, 7.5, fontR, GRAY_900);
+    ly -= 15;
   }
 
-  // Detalle cotización (lado derecho)
+  // Detalle cotización — derecha
   const totalItems = items.length;
   const totalQty   = items.reduce((s, i) => s + i.qty, 0);
 
-  let ry = y - 34;
-  text(page, "Validez:",         colRight + 10, ry,      8, fontB, GOLD_DARK);
-  text(page, "15 días desde emisión", colRight + 65, ry, 8, fontR, BLACK);
-  ry -= 16;
-  text(page, "Productos:",       colRight + 10, ry,      8, fontB, GOLD_DARK);
-  text(page, `${totalItems} tipo(s) — ${totalQty} unidad(es)`, colRight + 65, ry, 8, fontR, BLACK);
-  ry -= 16;
-  text(page, "Moneda:",          colRight + 10, ry,      8, fontB, GOLD_DARK);
-  text(page, "CLP (Pesos Chilenos)", colRight + 65, ry,  8, fontR, BLACK);
-  ry -= 20;
-
-  // Mini badge de monto
-  drawRect(page, colRight + 10, ry - 12, colW - 20, 26, DARK_BG);
-  text(page, "TOTAL ESTIMADO", colRight + 20, ry - 2,  7, fontR, GOLD);
-  const totalStr = clp(total);
-  text(page, totalStr, colRight + 20, ry - 15, 13, fontB, WHITE);
-
-  // ── TABLA DE PRODUCTOS ────────────────────────────────────
-  y -= sectionH + 24;
-
-  // Cabecera tabla
-  const TABLE_L = 36;
-  const TABLE_W = W - 72;
-  const ROW_H   = 20;
-
-  drawRect(page, TABLE_L, y - ROW_H, TABLE_W, ROW_H, DARK_BG);
-
-  // Columnas (x, label, ancho, align)
-  const cols: Array<{ x: number; label: string; w: number; align: "left" | "right" | "center" }> = [
-    { x: TABLE_L + 6,   label: "PRODUCTO",          w: 80,  align: "left"   },
-    { x: TABLE_L + 92,  label: "MODELO",            w: 65,  align: "left"   },
-    { x: TABLE_L + 163, label: "COLOR",             w: 55,  align: "left"   },
-    { x: TABLE_L + 224, label: "CANT.",             w: 32,  align: "center" },
-    { x: TABLE_L + 263, label: "MEDIDAS",           w: 72,  align: "center" },
-    { x: TABLE_L + 343, label: "ÁREA m²",           w: 48,  align: "center" },
-    { x: TABLE_L + 399, label: "P. UNIT.",          w: 58,  align: "right"  },
-    { x: TABLE_L + 465, label: "SUBTOTAL",          w: 58,  align: "right"  },
+  let ry = y - 36;
+  const detRows: [string, string][] = [
+    ["Validez",    "15 días desde emisión"],
+    ["Productos",  `${totalItems} tipo(s) — ${totalQty} unidad(es)`],
+    ["Moneda",     "CLP (Pesos Chilenos)"],
   ];
-
-  // Cabeceras
-  for (const col of cols) {
-    const lw = fontB.widthOfTextAtSize(col.label, 7);
-    let tx = col.x;
-    if (col.align === "right")  tx = col.x + col.w - lw - 4;
-    if (col.align === "center") tx = col.x + (col.w - lw) / 2;
-    text(page, col.label, tx, y - 14, 7, fontB, WHITE);
+  for (const [label, value] of detRows) {
+    txt(page, `${label}:`, COL_R + 10, ry, 7.5, fontB, RED_DARK);
+    txt(page, value,       COL_R + 68,  ry, 7.5, fontR, GRAY_900);
+    ry -= 15;
   }
 
-  // Línea divisoria bajo cabecera
-  y -= ROW_H;
+  // Badge TOTAL dentro del bloque derecho
+  ry -= 8;
+  drawRect(page, COL_R + 10, ry - 26, COL_W - 20, 26, GRAY_900);
+  // Franja roja izquierda del badge
+  drawRect(page, COL_R + 10, ry - 26, 4, 26, RED);
+  txt(page, "TOTAL ESTIMADO", COL_R + 20, ry - 10, 7, fontB, WHITE);
+  const totalStr = clp(total);
+  const tsW = fontB.widthOfTextAtSize(totalStr, 13);
+  txt(page, totalStr, COL_R + COL_W - tsW - 14, ry - 19, 13, fontB, WHITE);
 
-  // Filas
+  y -= SEC_H + 18;
+
+  // ════════════════════════════════════════════════════════════
+  // TABLA DE PRODUCTOS
+  // ════════════════════════════════════════════════════════════
+  const TL  = 36;
+  const TW  = W - 72;
+  const RH  = 19; // row height
+
+  // Cabecera tabla
+  drawRect(page, TL, y - RH, TW, RH, GRAY_900);
+
+  // Columnas: { x relativo a TL, label, ancho, align }
+  type Align = "left" | "center" | "right";
+  const cols: { rx: number; label: string; w: number; align: Align }[] = [
+    { rx: 0,   label: "PRODUCTO",  w: 82,  align: "left"   },
+    { rx: 82,  label: "MODELO",    w: 65,  align: "left"   },
+    { rx: 147, label: "COLOR",     w: 52,  align: "left"   },
+    { rx: 199, label: "CANT.",     w: 30,  align: "center" },
+    { rx: 229, label: "MEDIDAS",   w: 68,  align: "center" },
+    { rx: 297, label: "ÁREA m²",   w: 46,  align: "center" },
+    { rx: 343, label: "P.UNIT.",   w: 58,  align: "right"  },
+    { rx: 401, label: "SUBTOTAL",  w: 62,  align: "right"  },
+  ];
+
+  // Dibujar cabeceras
+  for (const c of cols) {
+    const lw  = fontB.widthOfTextAtSize(c.label, 6.5);
+    let   tx  = TL + c.rx + 4;
+    if (c.align === "right")  tx = TL + c.rx + c.w - lw - 4;
+    if (c.align === "center") tx = TL + c.rx + (c.w - lw) / 2;
+    txt(page, c.label, tx, y - RH + 6, 6.5, fontB, WHITE);
+  }
+
+  // Separadores verticales en cabecera
+  for (let i = 1; i < cols.length; i++) {
+    const cx = TL + cols[i].rx;
+    page.drawLine({
+      start: { x: cx, y: y },
+      end:   { x: cx, y: y - RH },
+      thickness: 0.3,
+      color: GRAY_700,
+    });
+  }
+
+  y -= RH;
+
+  // Filas de productos
   items.forEach((item, idx) => {
     const area     = item.width * item.height;
     const price    = curtainPrices[item.type] || 0;
     const subtotal = area * price * item.qty;
-    const rowColor = idx % 2 === 0 ? WHITE : GRAY_LIGHT;
+    const bg       = idx % 2 === 0 ? WHITE : GRAY_100;
 
-    drawRect(page, TABLE_L, y - ROW_H, TABLE_W, ROW_H, rowColor);
+    drawRect(page, TL, y - RH, TW, RH, bg, GRAY_BORDER, 0.3);
 
-    // Línea inferior de fila
-    page.drawLine({
-      start: { x: TABLE_L, y: y - ROW_H },
-      end:   { x: TABLE_L + TABLE_W, y: y - ROW_H },
-      thickness: 0.3,
-      color: GRAY_MID,
-    });
-
-    const rowValues = [
-      { col: cols[0], val: safeText(item.type,  12) },
-      { col: cols[1], val: safeText(item.model, 10) },
-      { col: cols[2], val: safeText(item.color, 9)  },
-      { col: cols[3], val: String(item.qty)         },
-      { col: cols[4], val: `${item.width}×${item.height}` },
-      { col: cols[5], val: area.toFixed(2)           },
-      { col: cols[6], val: clp(price)                },
-      { col: cols[7], val: clp(subtotal)             },
+    const vals = [
+      safe(item.type,  13),
+      safe(item.model, 10),
+      safe(item.color, 9),
+      String(item.qty),
+      `${item.width}x${item.height}m`,
+      area.toFixed(2),
+      clp(price),
+      clp(subtotal),
     ];
 
-    for (const { col, val } of rowValues) {
-      const vw = fontR.widthOfTextAtSize(val, 8);
-      let tx = col.x;
-      if (col.align === "right")  tx = col.x + col.w - vw - 4;
-      if (col.align === "center") tx = col.x + (col.w - vw) / 2;
-      text(page, val, tx, y - 14, 8, fontR, BLACK);
-    }
+    vals.forEach((val, ci) => {
+      const c   = cols[ci];
+      const vw  = fontR.widthOfTextAtSize(val, 7.5);
+      let   tx  = TL + c.rx + 4;
+      if (c.align === "right")  tx = TL + c.rx + c.w - vw - 4;
+      if (c.align === "center") tx = TL + c.rx + (c.w - vw) / 2;
 
-    // Subtotal en dorado
-    const svw = fontB.widthOfTextAtSize(clp(subtotal), 8);
-    const sc = cols[7];
-    const stx = sc.x + sc.w - svw - 4;
-    text(page, clp(subtotal), stx, y - 14, 8, fontB, GOLD_DARK);
+      // Subtotal en rojo
+      const f = ci === vals.length - 1 ? fontB : fontR;
+      const color = ci === vals.length - 1 ? RED_DARK : GRAY_900;
+      txt(page, val, tx, y - RH + 6, 7.5, f, color);
+    });
 
-    y -= ROW_H;
+    y -= RH;
   });
 
-  // ── TOTAL FINAL ───────────────────────────────────────────
+  // Línea cierre tabla
+  page.drawLine({ start: { x: TL, y }, end: { x: TL + TW, y }, thickness: 0.5, color: GRAY_BORDER });
+
   y -= 10;
 
-  // Bloque negro total
-  drawRect(page, TABLE_L, y - 30, TABLE_W, 30, DARK_BG);
+  // ════════════════════════════════════════════════════════════
+  // TOTAL FINAL — barra ancha
+  // ════════════════════════════════════════════════════════════
+  const TOTAL_H = 34;
+  drawRect(page, TL, y - TOTAL_H, TW, TOTAL_H, GRAY_900);
+  // acento rojo derecho
+  drawRect(page, TL + TW - 6, y - TOTAL_H, 6, TOTAL_H, RED);
 
-  text(page, "TOTAL ESTIMADO", TABLE_L + 12, y - 19, 10, fontB, GOLD);
+  txt(page, "TOTAL ESTIMADO", TL + 14, y - TOTAL_H / 2 - 4, 10, fontB, WHITE);
 
-  const totalFinalStr = clp(total);
-  const tfW = fontB.widthOfTextAtSize(totalFinalStr, 16);
-  text(page, totalFinalStr, TABLE_L + TABLE_W - tfW - 12, y - 21, 16, fontB, WHITE);
+  const tfStr = clp(total);
+  const tfW   = fontB.widthOfTextAtSize(tfStr, 17);
+  txt(page, tfStr, TL + TW - tfW - 16, y - TOTAL_H / 2 - 6, 17, fontB, WHITE);
 
-  // Franja roja decorativa al final del total
-  drawRect(page, TABLE_L + TABLE_W - 6, y - 30, 6, 30, ACCENT_RED);
+  y -= TOTAL_H + 16;
 
-  // ── NOTAS ─────────────────────────────────────────────────
-  y -= 52;
-
-  // Fondo nota
-  drawRect(page, TABLE_L, y - 72, (TABLE_W / 2) - 8, 72, GRAY_LIGHT, GRAY_MID);
-  drawRect(page, TABLE_L + (TABLE_W / 2) + 8, y - 72, (TABLE_W / 2) - 8, 72, DARK_BG);
-
-  // Títulos
-  text(page, "NOTAS", TABLE_L + 10, y - 14, 8, fontB, GOLD_DARK);
-
-  const notes = [
-    "• Valores son referenciales e incluyen IVA.",
-    "• Instalación no incluida en el precio.",
-    "• Colores y texturas según disponibilidad.",
-    "• Medidas verificadas antes de fabricar.",
-    "• Cotización válida por 15 días.",
+  // ════════════════════════════════════════════════════════════
+  // NOTAS + MENSAJE — dos columnas, altura fija calculada
+  // ════════════════════════════════════════════════════════════
+  const NOTES = [
+    "Valores son referenciales e incluyen IVA.",
+    "Instalación no incluida en el precio.",
+    "Colores y texturas según disponibilidad.",
+    "Medidas verificadas por nuestro equipo antes de fabricar.",
+    "Cotización válida por 15 días desde la fecha de emisión.",
   ];
-  let ny = y - 28;
-  for (const note of notes) {
-    text(page, note, TABLE_L + 10, ny, 7.5, fontR, GRAY_TEXT);
-    ny -= 13;
+
+  const NOTE_LINE_H = 13;
+  const NOTE_PAD    = 14;
+  const NOTE_H      = NOTE_PAD * 2 + 16 + NOTES.length * NOTE_LINE_H; // padding + título + líneas
+
+  const HALF = (TW - 10) / 2;
+
+  // Caja notas (izquierda)
+  drawRect(page, TL, y - NOTE_H, HALF, NOTE_H, WHITE, GRAY_BORDER);
+  // Acento rojo arriba
+  drawRect(page, TL, y - 4, HALF, 4, RED);
+
+  txt(page, "NOTAS", TL + NOTE_PAD, y - NOTE_PAD - 4, 8, fontB, RED_DARK);
+
+  let ny = y - NOTE_PAD - 18;
+  for (const note of NOTES) {
+    txt(page, `• ${note}`, TL + NOTE_PAD, ny, 7, fontR, GRAY_700);
+    ny -= NOTE_LINE_H;
   }
 
-  // Caja derecha — mensaje
-  const rx2 = TABLE_L + (TABLE_W / 2) + 18;
-  text(page, "¡Gracias por confiar en", rx2, y - 18, 9, fontB, GOLD);
-  text(page, "Black Home!",             rx2, y - 32, 9, fontB, GOLD);
-  text(page, "Nuestro equipo se pondrá",  rx2, y - 48, 8, fontR, GRAY_MID);
-  text(page, "en contacto a la brevedad.", rx2, y - 61, 8, fontR, GRAY_MID);
+  // Caja mensaje (derecha) — texto centrado dentro del recuadro
+  const RX2 = TL + HALF + 10;
+  drawRect(page, RX2, y - NOTE_H, HALF, NOTE_H, GRAY_900);
+  drawRect(page, RX2, y - 4, HALF, 4, RED);
 
-  // ── FOOTER ────────────────────────────────────────────────
-  const FOOTER_H = 44;
-  drawRect(page, 0, 0, W, FOOTER_H, DARK_BG);
-  drawRect(page, 0, FOOTER_H, W, 2, GOLD);
+  // Texto centrado horizontalmente dentro del HALF
+const msgLines = [
+  {
+    text: "¡Gracias por cotizar",
+    size: 13,
+    font: fontB,
+    color: WHITE,
+    dy: 85,
+  },
+  {
+    text: "en Black Home!",
+    size: 13,
+    font: fontB,
+    color: WHITE,
+    dy: 65,
+  },
+  {
+    text: "Estamos felices de ayudarte",
+    size: 8,
+    font: fontR,
+    color: WHITE,
+    dy: 42,
+  },
+  {
+    text: "a encontrar la mejor solución",
+    size: 8,
+    font: fontR,
+    color: WHITE,
+    dy: 28,
+  },
+  {
+    text: "para tu hogar.",
+    size: 8,
+    font: fontR,
+    color: WHITE,
+    dy: 14,
+  },
+];
+for (const line of msgLines) {
+  const textWidth = line.font.widthOfTextAtSize(line.text, line.size);
 
-  // Footer info
-  text(page, "Las Condes, Santiago — Región Metropolitana", 36, 26, 7.5, fontR, GRAY_MID);
-  text(page, "contacto@blackhome.cl", 36, 13, 7.5, fontR, GRAY_MID);
+  txt(
+    page,
+    line.text,
+    RX2 + (HALF - textWidth) / 2,
+    y - NOTE_H + line.dy,
+    line.size,
+    line.font,
+    line.color
+  );
+}
+  // ════════════════════════════════════════════════════════════
+  // FOOTER
+  // ════════════════════════════════════════════════════════════
+  const FOOTER_H = 40;
+  drawRect(page, 0, 0, W, FOOTER_H, GRAY_900);
+  // Franja roja superior del footer
+  drawRect(page, 0, FOOTER_H, W, 2, RED);
 
-  const site = "www.blackhome.cl";
-  const siteW = fontB.widthOfTextAtSize(site, 8);
-  text(page, site, (W - siteW) / 2, 18, 8, fontB, GOLD);
+const emailStr = "contacto@blackhome.cl";
+const siteStr = "www.blackhome.cl";
+const phoneStr = "+56 9 63653017";
 
-  text(page, "+56 9 3400 7366", W - 130, 26, 7.5, fontR, GRAY_MID);
-  text(page, "BLACK HOME",       W - 130, 13, 8,   fontB, WHITE);
+// mismo tamaño y misma fuente para los 3
+const footerFont = fontB;
+const footerSize = 8;
+
+// ancho de cada texto
+const emailW = footerFont.widthOfTextAtSize(emailStr, footerSize);
+const siteW = footerFont.widthOfTextAtSize(siteStr, footerSize);
+const phoneW = footerFont.widthOfTextAtSize(phoneStr, footerSize);
+
+// 3 columnas iguales
+const col1Center = W * (1 / 6);
+const col2Center = W * (3 / 6);
+const col3Center = W * (5 / 6);
+
+// misma altura para los 3
+const footerY = 17;
+
+txt(
+  page,
+  emailStr,
+  col1Center - emailW / 2,
+  footerY,
+  footerSize,
+  footerFont,
+  WHITE
+);
+
+txt(
+  page,
+  siteStr,
+  col2Center - siteW / 2,
+  footerY,
+  footerSize,
+  footerFont,
+  WHITE
+);
+
+txt(
+  page,
+  phoneStr,
+  col3Center - phoneW / 2,
+  footerY,
+  footerSize,
+  footerFont,
+  WHITE
+);
+  
 
   return Buffer.from(await pdfDoc.save());
 }
@@ -389,142 +506,177 @@ export async function POST(req: Request) {
 
     const pdfBuffer = await generatePdf(client, items, total, quoteNumber);
 
-    // ── HTML filas ──
-    const rows = items
-      .map((item) => {
-        const area     = item.width * item.height;
-        const price    = curtainPrices[item.type] || 0;
-        const subtotal = area * price * item.qty;
-        const tdStyle  = `padding:10px 12px;border:1px solid #e0d8cc;font-size:13px;`;
-        return `
-          <tr>
-            <td style="${tdStyle}font-weight:600;">${item.type}</td>
-            <td style="${tdStyle}">${item.model}</td>
-            <td style="${tdStyle}">${item.color}</td>
-            <td style="${tdStyle}text-align:center;">${item.qty}</td>
-            <td style="${tdStyle}text-align:center;">${item.width} × ${item.height} m</td>
-            <td style="${tdStyle}text-align:center;">${area.toFixed(2)} m²</td>
-            <td style="${tdStyle}text-align:right;">$${(price).toLocaleString("es-CL")}</td>
-            <td style="${tdStyle}text-align:right;font-weight:700;color:#8b6c42;">$${subtotal.toLocaleString("es-CL")}</td>
-          </tr>`;
-      })
-      .join("");
+    // ── Filas HTML ──
+    const tdBase = `padding:9px 11px;border:1px solid #e2e2e2;font-size:13px;`;
+    const rows = items.map((item) => {
+      const area     = item.width * item.height;
+      const price    = curtainPrices[item.type] || 0;
+      const subtotal = area * price * item.qty;
+      return `
+        <tr>
+          <td style="${tdBase}font-weight:600;">${item.type}</td>
+          <td style="${tdBase}">${item.model}</td>
+          <td style="${tdBase}">${item.color}</td>
+          <td style="${tdBase}text-align:center;">${item.qty}</td>
+          <td style="${tdBase}text-align:center;">${item.width} × ${item.height} m</td>
+          <td style="${tdBase}text-align:center;">${area.toFixed(2)} m²</td>
+          <td style="${tdBase}text-align:right;">$${price.toLocaleString("es-CL")}</td>
+          <td style="${tdBase}text-align:right;font-weight:700;color:#c0392b;">$${subtotal.toLocaleString("es-CL")}</td>
+        </tr>`;
+    }).join("");
 
-    const thStyle = `padding:10px 12px;color:#fff;font-size:12px;font-weight:600;text-align:left;`;
+    const thBase = `padding:9px 11px;color:#fff;font-size:12px;font-weight:600;text-align:left;`;
 
-    const adminHtml = `
-      <div style="font-family:'Helvetica Neue',Arial,sans-serif;max-width:820px;margin:0 auto;background:#f7f4ee;">
-        <div style="background:#111;padding:24px 32px;border-bottom:3px solid #c6a77b;">
-          <h1 style="margin:0;color:#fff;font-size:22px;letter-spacing:2px;">BLACK HOME</h1>
-          <p style="margin:4px 0 0;color:#c6a77b;font-size:11px;letter-spacing:3px;">DISEÑO Y DECORACIÓN</p>
-        </div>
-        <div style="padding:28px 32px;background:#fff;">
-          <h2 style="color:#111;font-size:18px;margin:0 0 4px;">Nueva Cotización</h2>
-          <p style="margin:0;color:#8b6c42;font-weight:700;">${quoteNumber}</p>
-          <hr style="border:none;border-top:1px solid #e0d8cc;margin:20px 0;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-            <div>
-              <h3 style="color:#c6a77b;font-size:13px;letter-spacing:1px;margin:0 0 12px;">DATOS DEL CLIENTE</h3>
-              <table style="font-size:13px;border-collapse:collapse;width:100%;">
-                <tr><td style="padding:4px 0;color:#666;width:90px;">Nombre</td><td style="padding:4px 0;font-weight:600;">${client.name} ${client.lastname}</td></tr>
-                <tr><td style="padding:4px 0;color:#666;">Correo</td><td style="padding:4px 0;">${client.email}</td></tr>
-                <tr><td style="padding:4px 0;color:#666;">Teléfono</td><td style="padding:4px 0;">${client.phone}</td></tr>
-                <tr><td style="padding:4px 0;color:#666;">Dirección</td><td style="padding:4px 0;">${client.address}</td></tr>
-                <tr><td style="padding:4px 0;color:#666;">Región</td><td style="padding:4px 0;">${client.region}</td></tr>
-                <tr><td style="padding:4px 0;color:#666;">Comuna</td><td style="padding:4px 0;">${client.comuna}</td></tr>
-              </table>
-            </div>
-          </div>
-          <h3 style="color:#c6a77b;font-size:13px;letter-spacing:1px;margin:28px 0 12px;">DETALLE DE PRODUCTOS</h3>
-          <table style="width:100%;border-collapse:collapse;font-size:13px;">
-            <thead>
-              <tr style="background:#111;">
-                <th style="${thStyle}">Producto</th>
-                <th style="${thStyle}">Modelo</th>
-                <th style="${thStyle}">Color</th>
-                <th style="${thStyle}text-align:center;">Cant.</th>
-                <th style="${thStyle}text-align:center;">Medidas</th>
-                <th style="${thStyle}text-align:center;">Área m²</th>
-                <th style="${thStyle}text-align:right;">P. Unit.</th>
-                <th style="${thStyle}text-align:right;">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
-          <div style="margin-top:16px;background:#111;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;border-radius:4px;">
-            <span style="color:#c6a77b;font-size:13px;font-weight:700;letter-spacing:1px;">TOTAL ESTIMADO</span>
-            <span style="color:#fff;font-size:22px;font-weight:800;">$${Number(total).toLocaleString("es-CL")}</span>
-          </div>
-        </div>
-        <div style="background:#111;padding:16px 32px;text-align:center;">
-          <p style="margin:0;color:#c6a77b;font-size:11px;letter-spacing:2px;">BLACK HOME — contacto@blackhome.cl — +56 9 3400 7366</p>
-        </div>
-      </div>`;
+    const emailBase = (bodyContent: string) => `
+<div style="
+  font-family:Arial,sans-serif;
+  max-width:820px;
+  margin:0 auto;
+  background:#ffffff;
+  border:1px solid #e5e5e5;
+">
+  <div style="
+    height:4px;
+    background:#d54a2c;
+  "></div>
 
-    const clientHtml = `
-      <div style="font-family:'Helvetica Neue',Arial,sans-serif;max-width:820px;margin:0 auto;background:#f7f4ee;">
-        <div style="background:#111;padding:24px 32px;border-bottom:3px solid #c6a77b;">
-          <h1 style="margin:0;color:#fff;font-size:22px;letter-spacing:2px;">BLACK HOME</h1>
-          <p style="margin:4px 0 0;color:#c6a77b;font-size:11px;letter-spacing:3px;">DISEÑO Y DECORACIÓN</p>
-        </div>
-        <div style="padding:28px 32px;background:#fff;">
-          <h2 style="color:#111;font-size:18px;margin:0 0 4px;">Hola ${client.name},</h2>
-          <p style="color:#555;font-size:14px;">Hemos recibido tu solicitud de cotización. Adjuntamos el PDF con el detalle completo.</p>
-          <p style="margin:0;color:#8b6c42;font-weight:700;">${quoteNumber}</p>
-          <hr style="border:none;border-top:1px solid #e0d8cc;margin:20px 0;">
-          <h3 style="color:#c6a77b;font-size:13px;letter-spacing:1px;margin:0 0 12px;">RESUMEN DE TU COTIZACIÓN</h3>
-          <table style="width:100%;border-collapse:collapse;font-size:13px;">
-            <thead>
-              <tr style="background:#111;">
-                <th style="${thStyle}">Producto</th>
-                <th style="${thStyle}">Modelo</th>
-                <th style="${thStyle}">Color</th>
-                <th style="${thStyle}text-align:center;">Cant.</th>
-                <th style="${thStyle}text-align:center;">Medidas</th>
-                <th style="${thStyle}text-align:center;">Área m²</th>
-                <th style="${thStyle}text-align:right;">P. Unit.</th>
-                <th style="${thStyle}text-align:right;">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
-          <div style="margin-top:16px;background:#111;padding:14px 20px;border-radius:4px;display:flex;justify-content:space-between;align-items:center;">
-            <span style="color:#c6a77b;font-size:13px;font-weight:700;letter-spacing:1px;">TOTAL ESTIMADO</span>
-            <span style="color:#fff;font-size:22px;font-weight:800;">$${Number(total).toLocaleString("es-CL")}</span>
-          </div>
-          <div style="margin-top:24px;background:#faf7f2;border:1px solid #e0d8cc;border-radius:6px;padding:16px 20px;">
-            <p style="margin:0 0 6px;font-size:13px;font-weight:700;color:#8b6c42;">Notas importantes</p>
-            <ul style="margin:0;padding-left:18px;font-size:12px;color:#666;line-height:1.8;">
-              <li>Esta cotización tiene una validez de 15 días desde la fecha de emisión.</li>
-              <li>Los precios son referenciales e incluyen IVA.</li>
-              <li>Instalación no incluida en el precio.</li>
-              <li>Las medidas serán verificadas por nuestro equipo antes de fabricar.</li>
-            </ul>
-          </div>
-          <p style="margin-top:28px;font-size:13px;color:#555;">Nuestro equipo se pondrá en contacto contigo a la brevedad.<br><br>Atentamente,<br><strong>Black Home</strong></p>
-        </div>
-        <div style="background:#111;padding:16px 32px;text-align:center;">
-          <p style="margin:0;color:#c6a77b;font-size:11px;letter-spacing:2px;">BLACK HOME — contacto@blackhome.cl — +56 9 3400 7366</p>
-        </div>
-      </div>`;
+  <div style="padding:30px;">
+    ${bodyContent}
+  </div>
 
-    await transporter.sendMail({
-      from: `"Black Home" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_USER || "",
-      subject: `Nueva Cotización ${quoteNumber}`,
-      html: adminHtml,
-      attachments: [{ filename: `cotizacion-${quoteNumber}.pdf`, content: pdfBuffer }],
-    });
+  <div style="
+    background:#4a4a50;
+    padding:14px 20px;
+    text-align:center;
+  ">
+    <span style="
+      color:#ffffff;
+      font-size:12px;
+    ">
+      BLACK HOME · contacto@blackhome.cl · www.blackhome.cl
+    </span>
+  </div>
+</div>
+`;
+   const adminBody = `
+<h2 style="color:#222;margin-bottom:5px;">
+  Nueva Cotización
+</h2>
 
-    await transporter.sendMail({
-      from: `"Black Home" <${process.env.EMAIL_USER}>`,
-      to: client.email,
-      subject: `Tu Cotización Black Home — ${quoteNumber}`,
-      html: clientHtml,
-      attachments: [{ filename: `cotizacion-${quoteNumber}.pdf`, content: pdfBuffer }],
-    });
+<p style="
+  color:#d54a2c;
+  font-weight:bold;
+  margin-bottom:20px;
+">
+  ${quoteNumber}
+</p>
+
+<table style="font-size:13px;border-collapse:collapse;">
+  <tr><td><strong>Nombre:</strong></td><td>${client.name} ${client.lastname}</td></tr>
+  <tr><td><strong>Correo:</strong></td><td>${client.email}</td></tr>
+  <tr><td><strong>Teléfono:</strong></td><td>${client.phone}</td></tr>
+  <tr><td><strong>Dirección:</strong></td><td>${client.address}</td></tr>
+  <tr><td><strong>Región:</strong></td><td>${client.region}</td></tr>
+  <tr><td><strong>Comuna:</strong></td><td>${client.comuna}</td></tr>
+
+`;
+
+    const clientBody = `
+      <h2 style="color:#222;font-size:18px;margin:0 0 6px;">Hola ${client.name},</h2>
+      <p style="color:#555;font-size:14px;margin:0 0 16px;">Gracias por cotizar con Black Home. Adjuntamos tu cotización en PDF.</p>
+      <p style="margin:0 0 20px;color:#c0392b;font-weight:700;font-size:14px;">${quoteNumber}</p>
+      <h3 style="color:#c0392b;font-size:12px;letter-spacing:1px;margin:0 0 8px;">RESUMEN DE TU COTIZACIÓN</h3>`;
+
+  await transporter.sendMail({
+  from: `"Black Home Web" <${process.env.EMAIL_USER}>`,
+  to: process.env.EMAIL_USER,
+
+  subject: `Nueva Cotización ${quoteNumber}`,
+
+  html: emailBase(adminBody),
+
+  attachments: [
+    {
+      filename: `cotizacion-${quoteNumber}.pdf`,
+      content: pdfBuffer,
+    },
+  ],
+}); 
+
+  await transporter.sendMail({
+  from: `"Black Home" <${process.env.EMAIL_USER}>`,
+  to: client.email,
+  subject: `Tu Cotización Black Home — ${quoteNumber}`,
+
+  html: emailBase(`
+    <h2 style="
+      margin:0 0 15px;
+      color:#222;
+    ">
+      Hola ${client.name},
+    </h2>
+
+    <p style="
+      color:#555;
+      font-size:15px;
+      line-height:1.7;
+    ">
+      Gracias por cotizar con Black Home.
+    </p>
+
+    <p style="
+      color:#555;
+      font-size:15px;
+      line-height:1.7;
+    ">
+      Adjuntamos tu cotización en formato PDF para que puedas revisarla cuando quieras.
+    </p>
+
+    <div style="
+      margin-top:25px;
+      padding:15px;
+      background:#f5f5f5;
+      border-left:4px solid #d54a2c;
+    ">
+      <div style="
+        color:#888;
+        font-size:12px;
+        text-transform:uppercase;
+      ">
+        Número de cotización
+      </div>
+
+      <div style="
+        font-size:18px;
+        font-weight:bold;
+        color:#222;
+        margin-top:5px;
+      ">
+        ${quoteNumber}
+      </div>
+    </div>
+
+    <p style="
+      margin-top:25px;
+      color:#777;
+      font-size:14px;
+    ">
+      Si tienes cualquier consulta estaremos encantados de ayudarte.
+    </p>
+  `),
+
+  attachments: [
+    {
+      filename: `cotizacion-${quoteNumber}.pdf`,
+      content: pdfBuffer,
+    },
+  ],
+});
+
+
 
     return NextResponse.json({ success: true, quoteNumber });
+
   } catch (error) {
     console.error("ERROR:", error);
     return NextResponse.json(

@@ -148,9 +148,7 @@ export default function ProductosPage() {
             Productos
           </h1>
 
-          <p className="text-gray-500 text-sm md:text-base">
-            Explora nuestras cortinas premium
-          </p>
+        
 
         </div>
 

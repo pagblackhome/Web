@@ -16,7 +16,7 @@ export default function Header() {
       backdrop-blur-2xl
       border-b border-[#c6a77b]/10
       shadow-[0_10px_40px_rgba(0,0,0,0.45)]
-      h-20
+      h-24
       "
     >
       <div className="max-w-7xl mx-auto h-full px-6">
@@ -27,34 +27,41 @@ export default function Header() {
             <Image
               src="/images/BH.png"
               alt="Black Home"
-              width={170}
-              height={70}
+              width={190}
+              height={80}
               className="object-contain"
             />
 
             <div className="hidden md:block leading-none ml-[-6px]">
-              <h1 className="text-white text-xl font-light">
+              <h1 className="text-white text-2xl font-semibold">
                 Black <span className="text-[#d54a2c]">Home</span>
               </h1>
-              <p className="text-[10px] tracking-[0.25em] text-gray-400 uppercase">
+              <p className="text-xs tracking-[0.22em] text-gray-300 uppercase font-medium">
                 Diseño y Decoración
               </p>
             </div>
           </Link>
 
           {/* NAV */}
-          <nav className="hidden lg:flex items-center gap-10">
+          <nav className="hidden lg:flex items-center gap-12">
             {[
               ["Inicio", "/"],
               ["Productos", "/productos"],
               ["Cotizador", "/cotizador"],
-              ["Arregla tu Cortina", "/reparacion"],
-              ["Contacto", "/contacto"],
+              ["Mide tu Cortina", "/mide-tu-cortina"],
+              ["Contacto", "/#contacto"],
             ].map(([label, href]) => (
               <Link
                 key={label}
                 href={href}
-                className="text-white text-[14px] hover:text-[#f1d39a] transition"
+                className="
+text-white
+text-[16px]
+font-medium
+hover:text-[#f1d39a]
+transition
+duration-300
+"
               >
                 {label}
               </Link>
@@ -79,13 +86,20 @@ export default function Header() {
               ["Inicio", "/"],
               ["Productos", "/productos"],
               ["Cotizador", "/cotizador"],
-              ["Arregla tu Cortina", "/reparacion"],
+              ["Mide tu Cortina", "/reparacion"],
               ["Contacto", "/contacto"],
             ].map(([label, href]) => (
               <Link
                 key={label}
                 href={href}
-                className="py-4 text-white border-b border-gray-800"
+                className="
+py-4
+text-white
+text-lg
+font-medium
+border-b
+border-gray-800
+"
               >
                 {label}
               </Link>

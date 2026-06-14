@@ -49,6 +49,8 @@ export default function Home() {
 
   return (
     <>
+    
+
       <Header />
 
       <main className="min-h-screen bg-white text-black overflow-x-hidden">
@@ -293,197 +295,122 @@ export default function Home() {
 </section>
       {/* FOOTER */}
 
-      <footer
-  className="
-  bg-[#070707]
-  relative
-  mt-24
-  overflow-hidden
-  border-t
-  border-[#c6a77b]/15
-"
->
-
-  {/* brillo premium */}
-
-  <div className="absolute inset-0 pointer-events-none">
-
-    <div
-      className="
-      absolute
-      top-0
-      left-1/2
-      -translate-x-1/2
-      w-[900px]
-      h-[300px]
-      bg-[#c6a77b]/5
-      blur-[180px]
-      "
-    />
-
-  </div>
-
-  <div className="relative z-10 max-w-7xl mx-auto px-8 py-8">
-
-    <div className="grid lg:grid-cols-4 gap-8">
-
-      {/* LOGO */}
-
-      <div>
-
-        <Image
-          src="/images/BH.png"
-    alt="Black Home"
-    width={190}
-    height={80}
-    priority
-    className="
-      object-contain
-      drop-shadow-[0_0_10px_rgba(255,255,255,0.9)]
-      drop-shadow-[0_0_25px_rgba(255,255,255,0.5)]
-    "
-        />
-
-      </div>
-
-
-      {/* CONTACTO */}
-
-      <div className="space-y-7">
-
-        <div className="flex items-center gap-4">
-
-          <Phone
-            size={24}
-            className="text-[#c6a77b]"
-          />
-
-          <span className="text-gray-200 text-lg">
-            +56 9 3400 7366
-          </span>
-
-        </div>
-
-        <div className="flex items-center gap-4">
-
-          <Mail
-            size={24}
-            className="text-[#c6a77b]"
-          />
-
-          <span className="text-gray-200 text-lg">
-            contacto@blackhome.cl
-          </span>
-
-        </div>
-
-        <div className="flex items-center gap-4">
-
-          <MapPin
-            size={24}
-            className="text-[#c6a77b]"
-          />
-
-          <span className="text-gray-200 text-lg">
-            Santiago, Chile
-          </span>
-
-        </div>
-
-      </div>
-
-      {/* REDES */}
-
-      <div className="border-l border-[#c6a77b]/40 pl-10">
-
-        <h3
-          className="
-          text-[#c6a77b]
-          text-2xl
-          font-semibold
-          mb-8
-          tracking-wide
-          "
-        >
-          SÍGUENOS
-        </h3>
-
-        <div className="flex gap-5">
-
-          <a
-            href="#"
-            className="
-w-14 h-14
-rounded-full
-border
-border-[#c6a77b]
-bg-[#c6a77b]/10
-flex items-center
-justify-center
-text-[#c6a77b]
-shadow-[0_0_15px_rgba(198,167,123,0.35)]
-"
-          >
-           <FaInstagram size={24} />
-          </a>
-
-          <a
-            href="#"
-            className="
-w-14 h-14
-rounded-full
-border
-border-[#c6a77b]
-bg-[#c6a77b]/10
-flex items-center
-justify-center
-text-[#c6a77b]
-shadow-[0_0_15px_rgba(198,167,123,0.35)]
-"
-          >
-            <FaFacebookF size={24} />
-          </a>
-
-          <a
-            href="https://wa.me/56934007366"
-            target="_blank"
-            className="
-w-14 h-14
-rounded-full
-border
-border-[#c6a77b]
-bg-[#c6a77b]/10
-flex items-center
-justify-center
-text-[#c6a77b]
-shadow-[0_0_15px_rgba(198,167,123,0.35)]
-"
-          >
-            <Phone size={22} />
-          </a>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <div
-      className="
-      mt-16
-      pt-8
-      border-t
-      border-[#c6a77b]/20
-      text-center
-      text-gray-500
-      "
-    >
-      © 2026 Black Home. Todos los derechos reservados.
-    </div>
-
-  </div>
-
-</footer>
+   <footer className="mt-16 bg-[#413d3d] text-white">
+       
+         <div className="max-w-6xl mx-auto px-8 py-8">
+       
+           <div className="grid md:grid-cols-[1fr_auto_1.4fr_auto_1fr] items-center gap-8">
+       
+             {/* LOGO */}
+             <div className="flex justify-center h-[90px] items-center">
+               <Image
+                 src="/images/BH.png"
+                 alt="Black Home"
+                 width={190}
+                 height={190}
+                 priority
+                 className="object-contain"
+               />
+             </div>
+       
+             {/* LINEA DIVISORIA */}
+             <div className="hidden md:block h-28 w-px bg-[#D4B06A]/30" />
+       
+             {/* CONTACTO */}
+             <div className="flex justify-center">
+               <div className="space-y-4">
+       
+                 <div className="flex items-center gap-4">
+                   <Phone size={18} className="text-[#D4B06A]" />
+                   <span className="text-base">+56 9 3400 7366</span>
+                 </div>
+       
+                 <div className="flex items-center gap-4">
+                   <Mail size={18} className="text-[#D4B06A]" />
+                   <span className="text-base">contacto@blackhome.cl</span>
+                 </div>
+       
+                 <div className="flex items-center gap-4">
+                   <MapPin size={18} className="text-[#D4B06A]" />
+                   <span className="text-base">Santiago, Chile</span>
+                 </div>
+       
+               </div>
+             </div>
+       
+             {/* LINEA DIVISORIA */}
+             <div className="hidden md:block h-28 w-px bg-[#D4B06A]/30" />
+       
+             {/* REDES SOCIALES */}
+             <div className="flex flex-col items-center">
+       
+               <h3 className="text-[#D4B06A] font-semibold text-2xl mb-4 tracking-wide">
+                 SÍGUENOS
+               </h3>
+       
+               <div className="flex gap-4">
+       
+                 <a
+                   href="#"
+                   className="
+                     w-12 h-12
+                     rounded-full
+                     border border-[#D4B06A]
+                     text-[#D4B06A]
+                     flex items-center justify-center
+                     hover:bg-[#D4B06A]/10
+                     transition-all duration-300
+                   "
+                 >
+                   <FaInstagram size={18} />
+                 </a>
+       
+                 <a
+                   href="#"
+                   className="
+                     w-12 h-12
+                     rounded-full
+                     border border-[#D4B06A]
+                     text-[#D4B06A]
+                     flex items-center justify-center
+                     hover:bg-[#D4B06A]/10
+                     transition-all duration-300
+                   "
+                 >
+                   <FaFacebookF size={18} />
+                 </a>
+       
+                 <a
+                   href="tel:+56934007366"
+                   className="
+                     w-12 h-12
+                     rounded-full
+                     border border-[#D4B06A]
+                     text-[#D4B06A]
+                     flex items-center justify-center
+                     hover:bg-[#D4B06A]/10
+                     transition-all duration-300
+                   "
+                 >
+                   <Phone size={18} />
+                 </a>
+       
+               </div>
+       
+             </div>
+       
+           </div>
+       
+           {/* LINEA INFERIOR */}
+           <div className="border-t border-[#D4B06A]/30 mt-8 pt-5">
+             <p className="text-center text-sm text-gray-300">
+               © 2026 Black Home. Todos los derechos reservados.
+             </p>
+           </div>
+       
+         </div>
+       
+       </footer>
 
       {/* WHATSAPP */}
      <a

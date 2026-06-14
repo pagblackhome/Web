@@ -107,32 +107,36 @@ export default function ProductosPage() {
  <Header />
 
         {/* POPUP MEDIDAS */}
-{openGuide && (
+<section id="mide-tu-cortina">
 
-  <div className="fixed inset-0 z-[99999] bg-black/70 backdrop-blur-sm flex items-center justify-center px-4">
+  {openGuide && (
 
-    <div className="relative bg-[#f7f4ee] rounded-[35px] overflow-hidden max-w-4xl w-full shadow-2xl border border-white/20">
+    <div className="fixed inset-0 z-[99999] bg-black/70 backdrop-blur-sm flex items-center justify-center px-4">
 
-      {/* BOTON CERRAR */}
-      <button
-        onClick={() => setOpenGuide(false)}
-        className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black text-white text-xl hover:scale-110 transition"
-      >
-        ×
-      </button>
+      <div className="relative bg-[#f7f4ee] rounded-[35px] overflow-hidden max-w-4xl w-full shadow-2xl border border-white/20">
 
-      {/* IMAGEN */}
-      <img
-        src="/images/medir-cortinas.png"
-        alt="Cómo medir cortinas roller"
-        className="w-full h-auto object-cover"
-      />
+        {/* BOTON CERRAR */}
+        <button
+          onClick={() => setOpenGuide(false)}
+          className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black text-white text-xl hover:scale-110 transition"
+        >
+          ×
+        </button>
+
+        {/* IMAGEN */}
+        <img
+          src="/images/medir-cortinas.png"
+          alt="Cómo medir cortinas roller"
+          className="w-full h-auto object-cover"
+        />
+
+      </div>
 
     </div>
 
-  </div>
+  )}
 
-)}
+</section>
 
       {/* CONTENT */}
       <div className="px-6 py-10">
@@ -271,19 +275,122 @@ export default function ProductosPage() {
 </a>
 
       {/* FOOTER */}
-      <footer className="bg-black text-white py-10 mt-16">
-
-        <div className="max-w-5xl mx-auto text-center text-sm text-gray-400">
-
-          <p>Blackhome — Cortinas modernas y elegantes</p>
-
-          <p className="mt-2">
-            © 2026 Todos los derechos reservados
-          </p>
-
-        </div>
-
-      </footer>
+      <footer className="mt-16 bg-[#413d3d] text-white">
+          
+            <div className="max-w-6xl mx-auto px-8 py-8">
+          
+              <div className="grid md:grid-cols-[1fr_auto_1.4fr_auto_1fr] items-center gap-8">
+          
+                {/* LOGO */}
+                <div className="flex justify-center h-[90px] items-center">
+                  <Image
+                    src="/images/BH.png"
+                    alt="Black Home"
+                    width={190}
+                    height={190}
+                    priority
+                    className="object-contain"
+                  />
+                </div>
+          
+                {/* LINEA DIVISORIA */}
+                <div className="hidden md:block h-28 w-px bg-[#D4B06A]/30" />
+          
+                {/* CONTACTO */}
+                <div className="flex justify-center">
+                  <div className="space-y-4">
+          
+                    <div className="flex items-center gap-4">
+                      <Phone size={18} className="text-[#D4B06A]" />
+                      <span className="text-base">+56 9 3400 7366</span>
+                    </div>
+          
+                    <div className="flex items-center gap-4">
+                      <Mail size={18} className="text-[#D4B06A]" />
+                      <span className="text-base">contacto@blackhome.cl</span>
+                    </div>
+          
+                    <div className="flex items-center gap-4">
+                      <MapPin size={18} className="text-[#D4B06A]" />
+                      <span className="text-base">Santiago, Chile</span>
+                    </div>
+          
+                  </div>
+                </div>
+          
+                {/* LINEA DIVISORIA */}
+                <div className="hidden md:block h-28 w-px bg-[#D4B06A]/30" />
+          
+                {/* REDES SOCIALES */}
+                <div className="flex flex-col items-center">
+          
+                  <h3 className="text-[#D4B06A] font-semibold text-2xl mb-4 tracking-wide">
+                    SÍGUENOS
+                  </h3>
+          
+                  <div className="flex gap-4">
+          
+                    <a
+                      href="#"
+                      className="
+                        w-12 h-12
+                        rounded-full
+                        border border-[#D4B06A]
+                        text-[#D4B06A]
+                        flex items-center justify-center
+                        hover:bg-[#D4B06A]/10
+                        transition-all duration-300
+                      "
+                    >
+                      <FaInstagram size={18} />
+                    </a>
+          
+                    <a
+                      href="#"
+                      className="
+                        w-12 h-12
+                        rounded-full
+                        border border-[#D4B06A]
+                        text-[#D4B06A]
+                        flex items-center justify-center
+                        hover:bg-[#D4B06A]/10
+                        transition-all duration-300
+                      "
+                    >
+                      <FaFacebookF size={18} />
+                    </a>
+          
+                    <a
+                      href="tel:+56934007366"
+                      className="
+                        w-12 h-12
+                        rounded-full
+                        border border-[#D4B06A]
+                        text-[#D4B06A]
+                        flex items-center justify-center
+                        hover:bg-[#D4B06A]/10
+                        transition-all duration-300
+                      "
+                    >
+                      <Phone size={18} />
+                    </a>
+          
+                  </div>
+          
+                </div>
+          
+              </div>
+          
+              {/* LINEA INFERIOR */}
+              <div className="border-t border-[#D4B06A]/30 mt-8 pt-5">
+                <p className="text-center text-sm text-gray-300">
+                  © 2026 Black Home. Todos los derechos reservados.
+                </p>
+              </div>
+          
+            </div>
+          
+          </footer>
 
     </main>
   );

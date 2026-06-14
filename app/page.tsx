@@ -49,7 +49,7 @@
 
    return (
   <>
-    <Header onOpenGuide={() => setOpenGuide(true)} />
+    <Header />
 
     <main className="min-h-screen bg-white text-black overflow-x-hidden">
         

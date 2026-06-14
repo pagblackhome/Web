@@ -675,7 +675,7 @@ export default function Cotizador() {
                 <a href="#" className="w-12 h-12 rounded-full border border-[#D4B06A] text-[#D4B06A] flex items-center justify-center hover:bg-[#D4B06A]/10 transition-all duration-300">
                   <FaFacebookF size={18} />
                 </a>
-                <a href="tel:+56934007366" className="w-12 h-12 rounded-full border border-[#D4B06A] text-[#D4B06A] flex items-center justify-center hover:bg-[#D4B06A]/10 transition-all duration-300">
+                <a href="tel:+56963653017" className="w-12 h-12 rounded-full border border-[#D4B06A] text-[#D4B06A] flex items-center justify-center hover:bg-[#D4B06A]/10 transition-all duration-300">
                   <Phone size={18} />
                 </a>
               </div>
@@ -693,7 +693,7 @@ export default function Cotizador() {
 
       {/* WHATSAPP */}
       <a
-        href="https://wa.me/56934007366"
+        href="https://wa.me/56963653017"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50"

@@ -92,7 +92,7 @@ export default function Footer() {
               </a>
     
               <a
-                href="tel:+56934007366"
+                href="tel:+56963653017"
                 className="
                   w-12 h-12
                   rounded-full

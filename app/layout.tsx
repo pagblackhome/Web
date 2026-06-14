@@ -1,3 +1,20 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Menu } from "lucide-react";
+
+type HeaderProps = {
+  onOpenGuide?: () => void;
+};
+
+export default function Header({ onOpenGuide }: HeaderProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // resto del código...
+}
+
 import type { Metadata } from "next";
 import "./globals.css";
 

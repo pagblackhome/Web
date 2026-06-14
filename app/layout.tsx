@@ -8,9 +8,14 @@ export const metadata: Metadata = {
     "Cortinas roller, blackout, duo y motorizadas en Chile. Diseño moderno y elegante.",
 
   icons: {
-    icon: "/BH.png",
-    shortcut: "/BH.png",
-    apple: "/BH.png",
+    icon: [
+      {
+        url: "/BH.png?v=999",
+        type: "image/png",
+      },
+    ],
+    shortcut: ["/BH.png?v=999"],
+    apple: ["/BH.png?v=999"],
   },
 };
 
@@ -21,6 +26,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <head>
+        <link rel="icon" href="/BH.png?v=999" type="image/png" />
+        <link rel="shortcut icon" href="/BH.png?v=999" />
+        <link rel="apple-touch-icon" href="/BH.png?v=999" />
+      </head>
+
       <body className="bg-white text-black">
         {children}
       </body>

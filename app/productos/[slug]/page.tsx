@@ -453,7 +453,26 @@ export default function ProductPage() {
              </div>
            
            </footer>
+{openGuide && (
+  <div className="fixed inset-0 z-[99999] bg-black/70 backdrop-blur-sm flex items-center justify-center px-4">
+    <div className="relative bg-[#f7f4ee] rounded-[35px] overflow-hidden max-w-4xl w-full shadow-2xl border border-white/20">
 
+      <button
+        onClick={() => setOpenGuide(false)}
+        className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black text-white text-xl hover:scale-110 transition"
+      >
+        ×
+      </button>
+
+      <img
+        src="/images/medir-cortinas.png"
+        alt="Cómo medir cortinas roller"
+        className="w-full h-auto object-cover"
+      />
+
+    </div>
+  </div>
+)}
     </main>
   );
 }

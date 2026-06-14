@@ -30,7 +30,7 @@ import {
 
 const product = {
   name: "Roller Duo Beige",
-  price: 89990,
+  price: 25990,
 
   images: ["/images/20.jpg", "/images/25.jpg", "/images/33.jpg"],
 
@@ -58,7 +58,7 @@ export default function ProductPage() {
   const [height, setHeight] = useState("");
   const [quantity, setQuantity] = useState("");
 
-  const pricePerM2 = 34990;
+  const pricePerM2 = 25990; // Precio por metro cuadrado (ejemplo)
 
   const total =
     Number(width || 0) *
@@ -317,7 +317,7 @@ export default function ProductPage() {
         </div>
       </section>
       <a
-  href="https://wa.me/56934007366"
+  href="https://wa.me/56963653017"
   target="_blank"
   rel="noopener noreferrer"
   className="fixed bottom-6 right-6 z-50"
@@ -423,7 +423,7 @@ export default function ProductPage() {
                      </a>
            
                      <a
-                       href="tel:+56934007366"
+                       href="tel:+56963653017"
                        className="
                          w-12 h-12
                          rounded-full

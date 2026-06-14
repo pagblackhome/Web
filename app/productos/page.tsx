@@ -41,7 +41,7 @@ const allProducts = [
     name: "Roller Duo Beige",
     category: "duo",
     image: "/images/20.jpg",
-    price: 89990,
+    price: 25990,
     featured: true,
   },
   {
@@ -50,7 +50,7 @@ const allProducts = [
     name: "Blackout Premium",
     category: "blackout",
     image: "/images/25.jpg",
-    price: 119990,
+    price: 25990,
     featured: true,
   },
   {
@@ -59,7 +59,7 @@ const allProducts = [
     name: "Sunscreen White",
     category: "sunscreen",
     image: "/images/33.jpg",
-    price: 69990,
+    price: 25990,
     featured: false,
   },
   {
@@ -68,7 +68,7 @@ const allProducts = [
     name: "Vertical Gris",
     category: "vertical",
     image: "/images/vertilux_rollershades_008.jpg",
-    price: 99990,
+    price: 25990,
     featured: false,
   },
 ];
@@ -256,7 +256,7 @@ export default function ProductosPage() {
 
       {/* WHATSAPP FLOAT */}
       <a
-  href="https://wa.me/56934007366"
+  href="https://wa.me/56963653017"
   target="_blank"
   rel="noopener noreferrer"
   className="fixed bottom-6 right-6 z-50"
@@ -361,7 +361,7 @@ export default function ProductosPage() {
                     </a>
           
                     <a
-                      href="tel:+56934007366"
+                      href="tel:+56963653017"
                       className="
                         w-12 h-12
                         rounded-full

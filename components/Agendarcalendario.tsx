@@ -333,15 +333,18 @@ export default function AgendarCalendar() {
   const [gcalUrl,    setGcalUrl]    = useState("");
   const [clientData, setClientData] = useState(null);
 
-  const changeMonth = useCallback((dir) => {
-    setMo((m) => {
-      const nm = m + dir;
-      if (nm < 0)  { setYr((y) => y - 1); return 11; }
-      if (nm > 11) { setYr((y) => y + 1); return 0; }
-      return nm;
-    });
-    setSelDay(null); setSelSlot(null); setSelType(null); setStep(1);
-  }, []);
+const changeMonth = (dir) => {
+  setMo((m) => {
+    const nm = m + dir;
+    if (nm < 0)  { setYr((y) => y - 1); return 11; }
+    if (nm > 11) { setYr((y) => y + 1); return 0; }
+    return nm;
+  });
+  setSelDay(null); 
+  setSelSlot(null); 
+  setSelType(null); 
+  setStep(1);
+};
 
   const handlePickDay  = (d) => { setSelDay(d); setSelSlot(null); setSelType(null); setStep(2); };
   const handlePickSlot = (t, tp) => { setSelSlot(t); setSelType(tp); setStep(3); };

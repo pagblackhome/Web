@@ -1,5 +1,5 @@
 import Header from "../../components/Header";
-import AgendarCalendar from "../../components/AgendarCalendar";
+import AgendarCalendar from "../../components/AgendarCalendar.jsx";
 import { FaWhatsapp, FaInstagram, FaFacebookF } from "react-icons/fa";
 import { Phone, Mail, MapPin } from "lucide-react";
 import Image from "next/image";
